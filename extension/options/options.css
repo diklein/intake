@@ -1,38 +1,70 @@
+/* Intake settings — same design system as the popup (and Platinum Capture): Söhne,
+   the warm red accent, transparent bordered inputs, accent-fill primary button. */
+
+@font-face {
+  font-family: 'Soehne';
+  src: url('../popup/fonts/soehne-buch.woff2') format('woff2');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Soehne';
+  src: url('../popup/fonts/soehne-kraftig.woff2') format('woff2');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Soehne';
+  src: url('../popup/fonts/soehne-halbfett.woff2') format('woff2');
+  font-weight: 600;
+}
+
 :root {
-  --bg: #ffffff;
-  --fg: #17191b;
-  --muted: #5d6468;
-  --border: #d9dcdf;
-  --border-strong: #9aa0a5;
-  --field: #f2f4f5;
-  --accent: #17191b;
-  --on-accent: #ffffff;
+  --bg: lab(100% 0 0);
+  --fg: lab(2.48213% -0.544049 -1.30067);
+  --muted: lab(39.6943% -1.60605 -3.28265);
+  --accent: lab(39.9645% 95.9579 96.0495);
+  --accent-fill: lab(39.9645% 95.9579 96.0495);
+  --border: lab(86.0896% -0.985116 -1.98125);
+  --border-strong: lab(58.2523% -1.30194 -2.63522);
+  --surface: lab(93.0497% -0.985801 -1.98162);
+  --surface-subtle: color-mix(in oklab, var(--surface) 50%, var(--bg));
+  --on-accent: lab(97.6882% -0.8232 -1.65225);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #1b1e21;
-    --fg: #e8eaec;
-    --muted: #9aa1a7;
-    --border: #33383d;
-    --border-strong: #6a7176;
-    --field: #24282c;
-    --accent: #e8eaec;
-    --on-accent: #17191b;
+    --bg: lab(5.27481% -0.922956 -2.11741);
+    --fg: lab(90.7281% -0.822723 -1.65201);
+    --muted: lab(57.0949% -1.61883 -3.28933);
+    --accent: lab(57.0017% 75.5813 53.334);
+    --accent-fill: lab(40.3307% 86.0561 82.1025);
+    --border: lab(18.8127% -1.57347 -3.26655);
+    --border-strong: lab(44.3345% -1.61025 -3.28476);
+    --surface: lab(10.6913% -1.54661 -3.25424);
+    --surface-subtle: color-mix(in oklab, var(--surface) 50%, var(--bg));
   }
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Soehne', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 14px;
   color: var(--fg);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
 
-:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; border-radius: 4px; }
+::selection {
+  background-color: var(--accent-fill);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 22%, transparent);
+}
 
 .page { max-width: 560px; margin: 0 auto; padding: 64px 24px 96px; }
 
@@ -55,16 +87,20 @@ h2 { font-size: 15px; font-weight: 600; margin-bottom: 18px; }
   font-size: 14px;
   font-family: inherit;
   color: var(--fg);
-  background: var(--field);
-  border: 1px solid transparent;
+  background: transparent;
+  border: 1px solid var(--border-strong);
   border-radius: 8px;
 }
 textarea.field { font-family: ui-monospace, monospace; font-size: 13px; line-height: 1.5; resize: vertical; }
 .field--narrow { width: 120px; }
-.field:focus-visible { outline: none; border-color: var(--border-strong); }
+.field:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 12%, transparent);
+}
 
 .check { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
-.check input { width: 15px; height: 15px; accent-color: var(--fg); }
+.check input { width: 15px; height: 15px; accent-color: var(--accent-fill); }
 
 .btn {
   height: 34px;
@@ -75,11 +111,13 @@ textarea.field { font-family: ui-monospace, monospace; font-size: 13px; line-hei
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
+  transition: background-color 0.15s, translate 0.15s, scale 0.15s;
 }
-.btn--primary { background: var(--accent); color: var(--on-accent); }
-.btn--secondary { background: var(--field); color: var(--fg); }
+.btn:active { translate: 0 1px; scale: 0.98; }
+.btn--primary { background: var(--accent-fill); color: var(--on-accent); }
+.btn--primary:hover { background: color-mix(in oklab, var(--accent-fill) 90%, black); }
+.btn--secondary { background: var(--surface); color: var(--fg); }
 .btn--secondary:hover { background: var(--border); }
-.btn--primary:hover { background: color-mix(in oklab, var(--accent) 88%, var(--bg)); }
 
 .saved { font-size: 13px; color: var(--muted); min-height: 1em; }
 
