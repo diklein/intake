@@ -46,6 +46,9 @@
     </div>
 
   </div>
-  <script type="module" src="popup.js"></script>
+  <!-- Classic script, bundled by esbuild — same loading behavior as Platinum Capture.
+       type="module" would defer execution past first paint and fetch a 3-file import
+       graph first; the bundle runs during parse. Source: popup.js + ../lib/*. -->
+  <script src="../dist/popup.js"></script>
 </body>
 </html>

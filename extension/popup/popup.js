@@ -42,7 +42,18 @@ function pageProbe() {
 }
 
 async function init() {
-  const vaultPromise = getVault()
+  // The vault check NEVER gates rendering — IndexedDB opens can take tens of ms, and the
+  // only thing the result changes is whether the setup screen swaps in. It resolves in
+  // parallel; saving re-awaits it if the user is faster than the disk.
+  getVault().then((handle) => {
+    vaultHandle = handle
+    if (!handle) {
+      $('main').hidden = true
+      $('setup').hidden = false
+      $('setup-btn').addEventListener('click', () => chrome.runtime.openOptionsPage())
+    }
+  })
+
   const probePromise = chrome.tabs.query({ active: true, currentWindow: true }).then(async ([tab]) => {
     activeTabId = tab.id
     // Tab metadata is free — the title lands before the probe's page round-trip.
@@ -66,14 +77,6 @@ async function init() {
     }
     return { url: tab.url || '', title: tab.title || '', selection: '', images: [] }
   })
-
-  vaultHandle = await vaultPromise
-  if (!vaultHandle) {
-    $('main').hidden = true
-    $('setup').hidden = false
-    $('setup-btn').addEventListener('click', () => chrome.runtime.openOptionsPage())
-    return
-  }
 
   pageData = await probePromise
   render()
@@ -121,6 +124,7 @@ function status(msg) {
 }
 
 async function ready() {
+  if (!vaultHandle) vaultHandle = await getVault() // beat the parallel check to the click
   if (await ensurePermission(vaultHandle)) return true
   status('Vault access was declined. Re-pick the folder in settings.')
   return false
