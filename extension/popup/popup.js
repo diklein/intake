@@ -70,12 +70,9 @@ function render() {
   $('title-input').value = pageData.title || ''
 
   const grid = $('image-grid')
-  const emptyEl = $('image-empty')
-  if (!pageData.images.length) {
-    emptyEl.textContent = 'No images found on this page'
-    return
-  }
-  emptyEl.remove()
+  // No images → the section never appears at all.
+  if (!pageData.images.length) return
+  $('section-image').hidden = false
   $('image-count').textContent = `${pageData.images.length} found`
 
   for (const img of pageData.images) {

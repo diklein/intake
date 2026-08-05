@@ -22,14 +22,14 @@
         <textarea id="text-input" placeholder="Selected text, or type a note…" rows="4"></textarea>
       </section>
 
-      <section class="section">
+      <!-- Hidden until the page actually yields images — an imageless page simply has no
+           Image section, and the popup never resizes to remove it. -->
+      <section class="section" id="section-image" hidden>
         <div class="section-header">
           <span class="section-label">Image</span>
           <span class="image-count" id="image-count"></span>
         </div>
-        <div class="image-grid" id="image-grid">
-          <p class="empty-state" id="image-empty">Loading…</p>
-        </div>
+        <div class="image-grid" id="image-grid"></div>
       </section>
 
       <section class="section">

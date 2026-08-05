@@ -91,6 +91,15 @@ export async function pickVault() {
   return handle
 }
 
+/** Safari options page: pick a folder INSIDE the vault via the native panel.
+ *  Resolves to the vault-relative path ('' = vault root), null if dismissed;
+ *  throws if the chosen folder is outside the vault. */
+export async function pickVaultFolder() {
+  const r = await native({ action: 'pick-folder' })
+  if (r && r.error) throw new Error(r.error)
+  return r && typeof r.rel === 'string' ? r.rel : null
+}
+
 export async function getVault() {
   if (!hasNativeVaultAccess) return nativeGetVault()
   return (await idbGet('vault')) ?? null

@@ -41,19 +41,14 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
         switch action {
         case "pick-vault":
-            // The open panel is powerbox-hosted (out of process), so a sandboxed extension
-            // can present it; the grant belongs to this process and the bookmark keeps it.
             DispatchQueue.main.async {
-                let app = NSApplication.shared
-                app.activate(ignoringOtherApps: true)
-                let panel = NSOpenPanel()
-                panel.canChooseDirectories = true
-                panel.canChooseFiles = false
-                panel.allowsMultipleSelection = false
-                panel.message = "Choose your Obsidian vault folder"
-                panel.prompt = "Use as Vault"
+                let url = Self.presentFolderPanel(
+                    message: "Choose your Obsidian vault folder",
+                    prompt: "Use as Vault",
+                    directory: nil
+                )
                 var reply: [String: Any] = [:]
-                if panel.runModal() == .OK, let url = panel.url {
+                if let url {
                     if let bookmark = try? url.bookmarkData(
                         options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil
                     ) {
@@ -61,6 +56,38 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
                         reply = ["name": url.lastPathComponent, "path": url.path]
                     } else {
                         reply = ["error": "Could not keep access to that folder"]
+                    }
+                }
+                Self.complete(context, with: reply)
+            }
+            return
+
+        case "pick-folder":
+            // Subfolder settings (text files / attachments): same panel, opened at the
+            // vault, and the reply is the chosen folder's vault-relative path.
+            DispatchQueue.main.async {
+                guard let vault = Self.vaultURL() else {
+                    Self.complete(context, with: ["error": "Choose your vault first"])
+                    return
+                }
+                let accessing = vault.startAccessingSecurityScopedResource()
+                defer { if accessing { vault.stopAccessingSecurityScopedResource() } }
+
+                let url = Self.presentFolderPanel(
+                    message: "Choose a folder inside your vault",
+                    prompt: "Choose",
+                    directory: vault
+                )
+                var reply: [String: Any] = [:]
+                if let url {
+                    let vaultPath = vault.standardizedFileURL.path
+                    let chosenPath = url.standardizedFileURL.path
+                    if chosenPath == vaultPath {
+                        reply = ["rel": ""]
+                    } else if chosenPath.hasPrefix(vaultPath + "/") {
+                        reply = ["rel": String(chosenPath.dropFirst(vaultPath.count + 1))]
+                    } else {
+                        reply = ["error": "That folder is outside your vault"]
                     }
                 }
                 Self.complete(context, with: reply)
@@ -83,6 +110,32 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             Self.complete(context, with: ["error": "unknown action"])
             return
         }
+    }
+
+    /// NSOpenPanel from an extension process: the panel itself is powerbox-hosted (out of
+    /// process), but this process must still be allowed to present UI and claim key status —
+    /// extension processes start with a .prohibited activation policy and no key window, so
+    /// without the activation dance the panel exists yet never reaches the screen.
+    static func presentFolderPanel(message: String, prompt: String, directory: URL?) -> URL? {
+        let app = NSApplication.shared
+        if app.activationPolicy() == .prohibited {
+            app.setActivationPolicy(.accessory)
+        }
+        app.activate(ignoringOtherApps: true)
+
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.message = message
+        panel.prompt = prompt
+        if let directory { panel.directoryURL = directory }
+        panel.level = .modalPanel
+        panel.orderFrontRegardless()
+        panel.makeKey()
+
+        return panel.runModal() == .OK ? panel.url : nil
     }
 
     static func complete(_ context: NSExtensionContext, with reply: [String: Any]) {
