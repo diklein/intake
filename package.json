@@ -4,7 +4,7 @@
   "description": "Capture the web into your Obsidian vault. Browser extension for Chrome and Safari.",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild src/extract.entry.js --bundle --format=iife --outfile=extension/dist/extract.js"
+    "build": "esbuild src/extract.entry.js --bundle --format=iife --footer:js=\"globalThis.__intakeExtractResult;\" --outfile=extension/dist/extract.js"
   },
   "keywords": [],
   "author": "",

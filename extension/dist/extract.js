@@ -8639,7 +8639,7 @@ ${a.join("\n")}
     "src/extract.entry.js"() {
       var import_defuddle = __toESM(require_dist());
       init_turndown_browser_es();
-      (() => {
+      function extract() {
         const td = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced", hr: "---" });
         const selection = String(window.getSelection() || "").trim();
         let title = document.title;
@@ -8656,8 +8656,10 @@ ${a.join("\n")}
           return w > 80 && h > 80 && img.src && !img.src.startsWith("data:");
         }).map((img) => ({ src: img.src, alt: img.alt || "" })).slice(0, 24);
         return { url: location.href, title, selection, articleMd, images };
-      })();
+      }
+      globalThis.__intakeExtractResult = extract();
     }
   });
   require_extract_entry();
 })();
+globalThis.__intakeExtractResult;

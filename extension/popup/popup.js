@@ -36,7 +36,11 @@ async function init() {
 // ── Render ───────────────────────────────────────────────────
 
 function render() {
-  if (pageData.selection) $('text-input').value = pageData.selection
+  if (pageData.selection) {
+    $('text-input').value = pageData.selection
+    // A selection is a clear statement of intent — the whole-article path leaves.
+    $('article-btn').hidden = true
+  }
   $('title-input').value = pageData.title || ''
 
   const grid = $('image-grid')

@@ -7,7 +7,7 @@
 import Defuddle from 'defuddle'
 import TurndownService from 'turndown'
 
-;(() => {
+function extract() {
   const td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', hr: '---' })
 
   const selection = String(window.getSelection() || '').trim()
@@ -34,4 +34,9 @@ import TurndownService from 'turndown'
     .slice(0, 24)
 
   return { url: location.href, title, selection, articleMd, images }
-})()
+}
+
+// executeScript's result is the injected script's LAST EXPRESSION — esbuild's IIFE wrapper
+// returns undefined, so the result rides a global that the build footer re-evaluates as the
+// script's final statement.
+globalThis.__intakeExtractResult = extract()
