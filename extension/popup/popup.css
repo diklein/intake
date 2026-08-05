@@ -24,6 +24,8 @@
   }
 }
 
+[hidden] { display: none !important; }
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -156,6 +158,7 @@ textarea:focus-visible,
 }
 
 .empty-state {
+  grid-column: 1 / -1;
   font-size: 13px;
   color: var(--muted);
   padding: 2px 0 4px;
