@@ -72,14 +72,17 @@ body {
 }
 
 /* ── Sections ───────────────────────────────── */
+/* Whitespace (#main's gap), not rules, separates the sections. */
 
-.section {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
+#main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 16px;
 }
 
-.section:first-child {
-  padding-top: 14px;
+.section {
+  padding: 0 16px;
 }
 
 .section-header {
@@ -169,7 +172,7 @@ textarea:focus-visible,
 /* ── Footer / buttons ───────────────────────── */
 
 .footer {
-  padding: 12px 16px;
+  padding: 0 16px 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
