@@ -61,6 +61,17 @@
     if (!r || r.error) throw new Error(r?.error || "native write failed");
     return r.written;
   }
+  async function openUrl(url) {
+    if (!hasNativeVaultAccess) {
+      await native({ action: "open-url", url }).catch(() => {
+      });
+      return;
+    }
+    const frame = document.createElement("iframe");
+    frame.style.display = "none";
+    frame.src = url;
+    document.body.appendChild(frame);
+  }
   async function getVault() {
     if (!hasNativeVaultAccess) return nativeGetVault();
     return await idbGet("vault") ?? null;
@@ -296,14 +307,13 @@
           const filename = sanitizeFilename(expand(settings.filenameTemplate, ctx)) + settings.fileExtension;
           const relPath = [settings.notesFolder, filename].filter(Boolean).join("/");
           const written = await writeFile(vaultHandle, relPath, markdown);
-          if (settings.openInObsidian) {
-            const file = written.replace(/\.mdx?$/, "");
-            const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file)}`;
-            const tab = await chrome.tabs.create({ url, active: false });
-            setTimeout(() => chrome.tabs.remove(tab.id).catch(() => {
-            }), 3e3);
-          }
           status(`Saved ${written}`);
+          if (settings.openInObsidian) {
+            const file = written.endsWith(".md") ? written.slice(0, -3) : written;
+            const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file)}`;
+            await new Promise((r) => setTimeout(r, 500));
+            await openUrl(url);
+          }
           setTimeout(() => window.close(), 900);
         } catch (err) {
           status(`Could not save: ${err.message}`);

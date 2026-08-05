@@ -89,6 +89,8 @@ textarea.field { font-family: ui-monospace, monospace; font-size: 13px; line-hei
 .btn {
   height: 34px;
   padding: 0 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
   border: 1px solid transparent;
   border-radius: 8px;
   font-size: 14px;

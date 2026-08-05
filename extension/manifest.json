@@ -5,6 +5,7 @@
   "description": "Capture the web into your Obsidian vault: notes, selections, images, and full articles as clean Markdown.",
   "permissions": [
     "activeTab",
+    "alarms",
     "scripting",
     "storage",
     "nativeMessaging"

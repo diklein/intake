@@ -94,6 +94,19 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             }
             return
 
+        case "open-url":
+            // Launch Obsidian directly — no browser tab, no "allow this website to open"
+            // dialog. Obsidian's scheme only; this is not a general URL opener.
+            if let s = message["url"] as? String, let url = URL(string: s), url.scheme == "obsidian" {
+                DispatchQueue.main.async {
+                    NSWorkspace.shared.open(url)
+                    Self.complete(context, with: ["ok": true])
+                }
+            } else {
+                Self.complete(context, with: ["error": "unsupported url"])
+            }
+            return
+
         case "get-vault":
             if let vault = Self.vaultURL() {
                 Self.complete(context, with: ["name": vault.lastPathComponent, "path": vault.path])

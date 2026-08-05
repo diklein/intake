@@ -1,4 +1,4 @@
-import { getVault, ensurePermission, writeFile } from '../lib/vault.js'
+import { getVault, ensurePermission, writeFile, openUrl } from '../lib/vault.js'
 import { getSettings } from '../lib/settings.js'
 import { expand, sanitizeFilename } from '../lib/template.js'
 
@@ -168,15 +168,19 @@ async function saveNote({ body }) {
     const relPath = [settings.notesFolder, filename].filter(Boolean).join('/')
     const written = await writeFile(vaultHandle, relPath, markdown)
 
+    status(`Saved ${written}`)
+
     if (settings.openInObsidian) {
-      // vaultHandle.name is the vault folder's name, which is what Obsidian calls the vault.
-      const file = written.replace(/\.mdx?$/, '')
+      // vaultHandle.name is the vault folder's name, which is what Obsidian calls the
+      // vault. Obsidian's file param implies .md — strip ONLY that extension, or Obsidian
+      // hunts for a .md twin of an .mdx file and toasts "not found". The pause lets
+      // Obsidian notice the externally created file before we ask it to open it.
+      const file = written.endsWith('.md') ? written.slice(0, -3) : written
       const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file)}`
-      const tab = await chrome.tabs.create({ url, active: false })
-      setTimeout(() => chrome.tabs.remove(tab.id).catch(() => {}), 3000)
+      await new Promise((r) => setTimeout(r, 500))
+      await openUrl(url)
     }
 
-    status(`Saved ${written}`)
     setTimeout(() => window.close(), 900)
   } catch (err) {
     status(`Could not save: ${err.message}`)
