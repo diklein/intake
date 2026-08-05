@@ -4,11 +4,9 @@
   <meta charset="UTF-8" />
   <title>Intake</title>
   <link rel="stylesheet" href="popup.css" />
-  <!-- Flatten the module waterfall: popup.js's imports start fetching with the HTML,
-       not after popup.js itself arrives. -->
-  <link rel="modulepreload" href="../lib/vault.js" />
-  <link rel="modulepreload" href="../lib/settings.js" />
-  <link rel="modulepreload" href="../lib/template.js" />
+  <!-- No modulepreload here: Chrome loads extension-page preloads in a different "world"
+       than the module loader and then warns they're unused. The imports are disk-local
+       anyway — the waterfall costs nothing measurable. -->
 </head>
 <body>
   <div class="app">
