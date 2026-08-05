@@ -1,4 +1,4 @@
-# Intake
+# Intake for Obsidian
 
 Capture the web into your Obsidian vault. A browser extension for Chrome and Safari that writes notes, selections, images, and full articles straight into the vault as clean markdown — no companion app, no staging folders, no sync service.
 
@@ -17,7 +17,7 @@ npm install
 npm run build
 ```
 
-Then `chrome://extensions` → enable Developer mode → Load unpacked → choose the `extension/` folder. Open the extension's settings to pick your vault.
+Then `chrome://extensions` → enable Developer mode → Load unpacked → choose the **`extension/` folder** (not the repo root — the manifest lives inside it). Open the extension's settings to pick your vault.
 
 ## Safari
 

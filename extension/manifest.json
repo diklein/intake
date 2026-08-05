@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Intake",
+  "name": "Intake for Obsidian",
   "version": "0.1.0",
   "description": "Capture the web into your Obsidian vault: notes, selections, images, and full articles as clean markdown.",
   "permissions": [
@@ -9,7 +9,9 @@
     "storage",
     "nativeMessaging"
   ],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "action": {
     "default_popup": "popup/popup.html",
     "default_title": "Capture to Obsidian",
