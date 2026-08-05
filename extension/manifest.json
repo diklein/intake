@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Intake for Obsidian",
   "version": "0.1.0",
-  "description": "Capture the web into your Obsidian vault: notes, selections, images, and full articles as clean markdown.",
+  "description": "Capture the web into your Obsidian vault: notes, selections, images, and full articles as clean Markdown.",
   "permissions": [
     "activeTab",
     "scripting",

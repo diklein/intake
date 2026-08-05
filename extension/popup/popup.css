@@ -217,6 +217,11 @@ textarea:focus-visible,
 .status {
   font-size: 12.5px;
   color: var(--muted);
-  min-height: 1em;
   text-align: center;
+}
+
+/* Empty status reserves no height — the footer's bottom padding stays tight under the
+   button (matching Platinum Capture) until there's actually something to say. */
+.status:empty {
+  display: none;
 }

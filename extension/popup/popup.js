@@ -2,34 +2,58 @@ import { getVault, ensurePermission, writeFile } from '../lib/vault.js'
 import { getSettings } from '../lib/settings.js'
 import { expand, sanitizeFilename } from '../lib/template.js'
 
-let pageData = { url: '', title: '', selection: '', articleMd: '', images: [] }
+let pageData = { url: '', title: '', selection: '', images: [] }
 let selectedImageSrc = null
 let vaultHandle = null
+let activeTabId = null
 
 const $ = (id) => document.getElementById(id)
 
 // ── Bootstrap ────────────────────────────────────────────────
+// The popup opens with #main already visible so the shell paints in one frame. Page data
+// comes from a tiny inline probe (milliseconds); the heavy Defuddle bundle only runs if
+// "Capture full article" is actually clicked. The vault check races alongside — the rare
+// unconfigured open swaps to setup, every other open never waits on IndexedDB.
+
+// Serialized into the page by executeScript — must be self-contained.
+function pageProbe() {
+  const selection = String(window.getSelection() || '').trim()
+  const images = Array.from(document.images)
+    .filter((img) => {
+      const w = img.naturalWidth || img.width
+      const h = img.naturalHeight || img.height
+      return w > 80 && h > 80 && img.src && !img.src.startsWith('data:')
+    })
+    .map((img) => ({ src: img.src, alt: img.alt || '' }))
+    .slice(0, 24)
+  return { url: location.href, title: document.title, selection, images }
+}
 
 async function init() {
-  vaultHandle = await getVault()
+  const vaultPromise = getVault()
+  const probePromise = chrome.tabs.query({ active: true, currentWindow: true }).then(async ([tab]) => {
+    activeTabId = tab.id
+    try {
+      const [{ result }] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: pageProbe,
+      })
+      if (result) return result
+    } catch {
+      // Pages scripts can't touch (chrome://, store pages): capture URL + title only.
+    }
+    return { url: tab.url || '', title: tab.title || '', selection: '', images: [] }
+  })
+
+  vaultHandle = await vaultPromise
   if (!vaultHandle) {
+    $('main').hidden = true
     $('setup').hidden = false
     $('setup-btn').addEventListener('click', () => chrome.runtime.openOptionsPage())
     return
   }
-  $('main').hidden = false
 
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-  try {
-    const [{ result }] = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['dist/extract.js'],
-    })
-    if (result) pageData = result
-  } catch {
-    // Pages scripts can't touch (chrome://, store pages): capture URL + title only.
-    pageData = { url: tab.url || '', title: tab.title || '', selection: '', articleMd: '', images: [] }
-  }
+  pageData = await probePromise
   render()
 }
 
@@ -146,9 +170,22 @@ $('save-btn').addEventListener('click', () => {
   saveNote({ body })
 })
 
-$('article-btn').addEventListener('click', () => {
-  const body = pageData.articleMd
-    ? `${pageData.articleMd}\n\n[Source](${pageData.url})\n`
+$('article-btn').addEventListener('click', async () => {
+  // Defuddle + Turndown inject on demand — this is the only path that needs them, and
+  // keeping them out of init() is what makes the popup open instantly.
+  status('Capturing article…')
+  let articleMd = ''
+  try {
+    const [{ result }] = await chrome.scripting.executeScript({
+      target: { tabId: activeTabId },
+      files: ['dist/extract.js'],
+    })
+    articleMd = result?.articleMd || ''
+  } catch {
+    // Fall through to the URL-only body below.
+  }
+  const body = articleMd
+    ? `${articleMd}\n\n[Source](${pageData.url})\n`
     : `[${noteContext().title}](${pageData.url})\n`
   saveNote({ body })
 })
