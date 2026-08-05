@@ -176,7 +176,8 @@ async function saveNote({ body }) {
       // hunts for a .md twin of an .mdx file and toasts "not found". The pause lets
       // Obsidian notice the externally created file before we ask it to open it.
       const file = written.endsWith('.md') ? written.slice(0, -3) : written
-      const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file)}`
+      // Keep path slashes literal — matches the URL shape verified against Obsidian.
+      const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file).replace(/%2F/g, '/')}`
       await new Promise((r) => setTimeout(r, 500))
       await openUrl(url)
     }

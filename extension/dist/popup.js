@@ -310,7 +310,7 @@
           status(`Saved ${written}`);
           if (settings.openInObsidian) {
             const file = written.endsWith(".md") ? written.slice(0, -3) : written;
-            const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file)}`;
+            const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file).replace(/%2F/g, "/")}`;
             await new Promise((r) => setTimeout(r, 500));
             await openUrl(url);
           }
