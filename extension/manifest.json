@@ -23,6 +23,13 @@
       "64": "icons/icon-64.png"
     }
   },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "options_ui": {
     "page": "options/options.html",
     "open_in_tab": true

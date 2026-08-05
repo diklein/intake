@@ -15,7 +15,19 @@ const $ = (id) => document.getElementById(id)
 // "Capture full article" is actually clicked. The vault check races alongside — the rare
 // unconfigured open swaps to setup, every other open never waits on IndexedDB.
 
-// Serialized into the page by executeScript — must be self-contained.
+function sendMessage(tabId, message, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), timeoutMs)
+    chrome.tabs.sendMessage(tabId, message, (response) => {
+      clearTimeout(timer)
+      if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message))
+      else resolve(response)
+    })
+  })
+}
+
+// Serialized into the page by executeScript — must be self-contained. Fallback only:
+// mirrors content.js's probe() for tabs the resident script never reached.
 function pageProbe() {
   const selection = String(window.getSelection() || '').trim()
   const images = Array.from(document.images)
@@ -35,6 +47,14 @@ async function init() {
     activeTabId = tab.id
     // Tab metadata is free — the title lands before the probe's page round-trip.
     if (tab.title) $('title-input').value = tab.title
+    // Resident content script first: its message round-trip is fast enough that the popup
+    // paints once, at its final size (same mechanism as Platinum Capture)…
+    try {
+      const result = await sendMessage(tab.id, { type: 'PROBE' }, 250)
+      if (result) return result
+    } catch {
+      // …no listener (tab predates the extension) — fall through to injection.
+    }
     try {
       const [{ result }] = await chrome.scripting.executeScript({
         target: { tabId: tab.id },

@@ -22,6 +22,7 @@
 		9A4A1D3D3023A87700923433 /* dist in Resources */ = {isa = PBXBuildFile; fileRef = 9A4A1D373023A87700923433 /* dist */; };
 		9A4A1D3E3023A87700923433 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 9A4A1D383023A87700923433 /* icons */; };
 		9A4A1D3F3023A87700923433 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 9A4A1D393023A87700923433 /* manifest.json */; };
+		9A4A1DCC3023A87700923433 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 9A4A1DCB3023A87700923433 /* content.js */; };
 		9A4A1D403023A87700923433 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = 9A4A1D3A3023A87700923433 /* lib */; };
 /* End PBXBuildFile section */
 
@@ -68,6 +69,7 @@
 		9A4A1D373023A87700923433 /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dist; path = ../../../extension/dist; sourceTree = "<group>"; };
 		9A4A1D383023A87700923433 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../../extension/icons; sourceTree = "<group>"; };
 		9A4A1D393023A87700923433 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../../extension/manifest.json; sourceTree = "<group>"; };
+		9A4A1DCB3023A87700923433 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = ../../../extension/content.js; sourceTree = "<group>"; };
 		9A4A1D3A3023A87700923433 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../../../extension/lib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,6 +151,7 @@
 				9A4A1D373023A87700923433 /* dist */,
 				9A4A1D383023A87700923433 /* icons */,
 				9A4A1D393023A87700923433 /* manifest.json */,
+				9A4A1DCB3023A87700923433 /* content.js */,
 				9A4A1D3A3023A87700923433 /* lib */,
 			);
 			name = Resources;
@@ -258,6 +261,7 @@
 				9A4A1D3D3023A87700923433 /* dist in Resources */,
 				9A4A1D3E3023A87700923433 /* icons in Resources */,
 				9A4A1D3F3023A87700923433 /* manifest.json in Resources */,
+				9A4A1DCC3023A87700923433 /* content.js in Resources */,
 				9A4A1D3B3023A87700923433 /* options in Resources */,
 				9A4A1D3C3023A87700923433 /* popup in Resources */,
 			);
