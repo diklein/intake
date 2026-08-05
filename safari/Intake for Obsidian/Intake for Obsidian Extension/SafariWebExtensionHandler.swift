@@ -146,7 +146,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
     static func writeFile(_ message: [String: Any]) -> [String: Any] {
         guard let vault = vaultURL() else {
-            return ["error": "No vault configured — choose it in Intake's settings"]
+            return ["error": "No vault configured. Choose it in Intake's settings."]
         }
         guard let relPath = message["relPath"] as? String else {
             return ["error": "missing path"]
@@ -168,7 +168,7 @@ class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         let overwrite = message["overwrite"] as? Bool ?? false
 
         guard vault.startAccessingSecurityScopedResource() else {
-            return ["error": "Vault access lapsed — re-choose the vault in Intake's settings"]
+            return ["error": "Vault access lapsed. Choose the vault again in Intake's settings."]
         }
         defer { vault.stopAccessingSecurityScopedResource() }
 

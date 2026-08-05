@@ -11,25 +11,10 @@
        popup flashed as a tiny white stub before snapping to 360px. Inline, the first layout
        is styled and full-size in the same instant the document exists. -->
   <style>
-    /* Intake popup — identical UI to Platinum Capture: the diklein.com design system in
-       miniature. Söhne, the warm red accent, flat corners everywhere except buttons and
-       inputs (shared 8px radius), square photo corners. Dark mode follows the system. */
-
-    @font-face {
-      font-family: 'Soehne';
-      src: url('fonts/soehne-buch.woff2') format('woff2');
-      font-weight: 400;
-    }
-    @font-face {
-      font-family: 'Soehne';
-      src: url('fonts/soehne-kraftig.woff2') format('woff2');
-      font-weight: 500;
-    }
-    @font-face {
-      font-family: 'Soehne';
-      src: url('fonts/soehne-halbfett.woff2') format('woff2');
-      font-weight: 600;
-    }
+    /* Intake popup — same UI anatomy as Platinum Capture (the diklein.com design system in
+       miniature): warm red accent, flat corners everywhere except buttons and inputs
+       (shared 8px radius), square photo corners. System font, not Söhne — Intake is public
+       and the site's font license stays with the site. Dark mode follows the system. */
 
     :root {
       --bg: lab(100% 0 0);
@@ -74,7 +59,7 @@
     }
 
     body {
-      font-family: 'Soehne', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 14px;
       color: var(--fg);
       background: var(--bg);
