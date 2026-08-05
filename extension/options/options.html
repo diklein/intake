@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Intake settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main class="page">
+    <h1>Intake</h1>
+    <p class="lead">Captures write straight into your Obsidian vault as markdown. Point Intake at the vault folder once; everything else is taste.</p>
+
+    <section class="group">
+      <h2>Vault</h2>
+      <div class="vault-row">
+        <button id="pick-vault" class="btn btn--primary">Choose vault folder</button>
+        <span id="vault-name" class="vault-name" role="status"></span>
+      </div>
+      <p class="hint">Pick the folder Obsidian opens as your vault. Intake only ever writes inside it.</p>
+    </section>
+
+    <section class="group">
+      <h2>Where captures go</h2>
+      <label class="field-label" for="notes-folder">Notes folder <span class="hint-inline">(inside the vault; empty = vault root)</span></label>
+      <input id="notes-folder" class="field" type="text" placeholder="e.g. Inbox" />
+      <label class="field-label" for="attachments-folder">Attachments folder</label>
+      <input id="attachments-folder" class="field" type="text" placeholder="attachments" />
+      <label class="field-label" for="file-extension">Note file extension</label>
+      <input id="file-extension" class="field field--narrow" type="text" placeholder=".md" />
+    </section>
+
+    <section class="group">
+      <h2>Templates</h2>
+      <label class="field-label" for="filename-template">Filename <span class="hint-inline">tokens: {title} {domain} {date} {time}</span></label>
+      <input id="filename-template" class="field" type="text" />
+      <label class="field-label" for="frontmatter-template">Note header <span class="hint-inline">tokens: {title} {url} {domain} {date} {time} {tags}</span></label>
+      <textarea id="frontmatter-template" class="field" rows="8" spellcheck="false"></textarea>
+    </section>
+
+    <section class="group">
+      <h2>After saving</h2>
+      <label class="check">
+        <input id="open-in-obsidian" type="checkbox" />
+        Open the new note in Obsidian
+      </label>
+    </section>
+
+    <p id="saved" class="saved" role="status"></p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

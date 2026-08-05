@@ -1,0 +1,20 @@
+{
+  "name": "intake",
+  "version": "1.0.0",
+  "description": "Capture the web into your Obsidian vault. Browser extension for Chrome and Safari.",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/extract.entry.js --bundle --format=iife --outfile=extension/dist/extract.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  },
+  "dependencies": {
+    "defuddle": "^0.19.2",
+    "turndown": "^7.2.4"
+  }
+}
