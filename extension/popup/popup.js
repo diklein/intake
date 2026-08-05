@@ -33,6 +33,8 @@ async function init() {
   const vaultPromise = getVault()
   const probePromise = chrome.tabs.query({ active: true, currentWindow: true }).then(async ([tab]) => {
     activeTabId = tab.id
+    // Tab metadata is free — the title lands before the probe's page round-trip.
+    if (tab.title) $('title-input').value = tab.title
     try {
       const [{ result }] = await chrome.scripting.executeScript({
         target: { tabId: tab.id },

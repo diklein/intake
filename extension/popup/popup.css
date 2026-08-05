@@ -38,6 +38,9 @@ body {
   color: var(--fg);
   background: var(--bg);
   width: 360px;
+  /* The popup never scrolls (the image grid scrolls internally) — without this, the
+     macOS overlay scrollbar flashes in the corner while Chrome resizes to content. */
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 

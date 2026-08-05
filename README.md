@@ -19,9 +19,18 @@ npm run build
 
 Then `chrome://extensions` → enable Developer mode → Load unpacked → choose the **`extension/` folder** (not the repo root — the manifest lives inside it). Open the extension's settings to pick your vault.
 
-## Safari
+## Safari (macOS)
 
-The Safari version wraps the same extension in a small Mac app (Safari has no folder-access API, so the app holds the vault permission natively). Build instructions coming with the first release.
+The same extension, wrapped in a small Mac app under `safari/` — Safari has no File System Access API, so vault writes route to a native handler instead. The handler shows the system folder picker itself and keeps a security-scoped bookmark, which means the setup flow is identical to Chrome's: open Intake's settings in Safari and click "Choose vault folder."
+
+```
+npm install
+npm run build
+cd "safari/Intake for Obsidian"
+xcodebuild -project "Intake for Obsidian.xcodeproj" -scheme "Intake for Obsidian" -configuration Release build
+```
+
+Copy the built `Intake for Obsidian.app` to `/Applications`, open it once, then enable the extension in Safari → Settings → Extensions. (Unsigned local builds also need Safari's Develop → Allow Unsigned Extensions.)
 
 ## Permissions
 

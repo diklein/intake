@@ -23,11 +23,9 @@ async function init() {
   $('attachments-folder-name').textContent = vault ? folderLabel(settings.attachmentsFolder) : ''
   $('open-in-obsidian').checked = settings.openInObsidian
 
+  // Works in both browsers: Chrome shows the FSA directory picker, Safari routes to the
+  // native handler's NSOpenPanel. Either way pickVault() resolves with the chosen vault.
   $('pick-vault').addEventListener('click', async () => {
-    if (!hasNativeVaultAccess) {
-      $('vault-name').textContent = 'This browser cannot grant folder access; use the Intake app instead.'
-      return
-    }
     try {
       const handle = await pickVault()
       $('vault-name').textContent = handle.name
@@ -40,10 +38,33 @@ async function init() {
     }
   })
 
+  // Safari can't show directory pickers from a web page — the folder settings degrade to
+  // typed vault-relative paths (the native handler creates missing folders on write).
+  const swapPickerForInput = (buttonId, settingKey) => {
+    const row = $(buttonId).closest('.picker-row')
+    const input = document.createElement('input')
+    input.type = 'text'
+    input.className = 'field'
+    input.placeholder = 'Vault root'
+    input.value = settings[settingKey]
+    input.addEventListener('change', async () => {
+      const rel = input.value.trim().replace(/^\/+|\/+$/g, '')
+      input.value = rel
+      await saveSettings({ [settingKey]: rel })
+      flash('Saved')
+    })
+    row.replaceChildren(input)
+  }
+  if (!hasNativeVaultAccess) {
+    swapPickerForInput('pick-notes', 'notesFolder')
+    swapPickerForInput('pick-attachments', 'attachmentsFolder')
+  }
+
   // Subfolders use the SAME system dialog as the vault; the chosen folder must live inside
   // the vault, and what's stored is its vault-relative path (that's what capture paths and
   // Obsidian links are built from).
   const wireFolderPicker = (buttonId, displayId, settingKey) => {
+    if (!hasNativeVaultAccess) return
     $(buttonId).addEventListener('click', async () => {
       const vault = await getVault()
       if (!vault) {

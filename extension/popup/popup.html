@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <title>Intake</title>
   <link rel="stylesheet" href="popup.css" />
+  <!-- Flatten the module waterfall: popup.js's imports start fetching with the HTML,
+       not after popup.js itself arrives. -->
+  <link rel="modulepreload" href="../lib/vault.js" />
+  <link rel="modulepreload" href="../lib/settings.js" />
+  <link rel="modulepreload" href="../lib/template.js" />
 </head>
 <body>
   <div class="app">
