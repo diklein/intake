@@ -67,10 +67,9 @@
       });
       return;
     }
-    const frame = document.createElement("iframe");
-    frame.style.display = "none";
-    frame.src = url;
-    document.body.appendChild(frame);
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab) await chrome.tabs.update(tab.id, { url }).catch(() => {
+    });
   }
   async function getVault() {
     if (!hasNativeVaultAccess) return nativeGetVault();

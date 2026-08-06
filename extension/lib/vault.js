@@ -100,18 +100,18 @@ export async function pickVaultFolder() {
   return r && typeof r.rel === 'string' ? r.rel : null
 }
 
-/** Open an obsidian:// URL without spawning a visible tab. Safari routes to the native
- *  handler (NSWorkspace — no tab and no "allow this website to open" dialog); Chrome
- *  navigates a hidden iframe inside the popup, which launches the protocol handler. */
+/** Open an obsidian:// URL without spawning a new tab. Safari routes to the native
+ *  handler (NSWorkspace — no tab and no "allow this website to open" dialog). Chrome
+ *  navigates the EXISTING active tab: external-protocol navigations never commit, so the
+ *  page stays put while the OS launches Obsidian. (A hidden iframe does not work — Chrome
+ *  silently blocks external protocols from subframes without fresh user activation.) */
 export async function openUrl(url) {
   if (!hasNativeVaultAccess) {
     await native({ action: 'open-url', url }).catch(() => {})
     return
   }
-  const frame = document.createElement('iframe')
-  frame.style.display = 'none'
-  frame.src = url
-  document.body.appendChild(frame)
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+  if (tab) await chrome.tabs.update(tab.id, { url }).catch(() => {})
 }
 
 export async function getVault() {
