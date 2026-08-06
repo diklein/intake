@@ -3,7 +3,7 @@ import { getSettings } from '../lib/settings.js'
 import { expand, sanitizeFilename } from '../lib/template.js'
 
 let pageData = { url: '', title: '', selection: '', images: [] }
-let selectedImageSrc = null
+const selectedImages = new Set()
 let vaultHandle = null
 let activeTabId = null
 
@@ -108,10 +108,11 @@ function render() {
     el.onerror = () => thumb.remove()
     thumb.appendChild(el)
     thumb.addEventListener('click', () => {
-      const was = thumb.classList.contains('is-selected')
-      grid.querySelectorAll('.is-selected').forEach((t) => t.classList.remove('is-selected'))
-      selectedImageSrc = was ? null : img.src
-      if (!was) thumb.classList.add('is-selected')
+      // Multi-select: every image toggles independently, and each selected image
+      // becomes its own attachment on save (uniquify handles the name collisions).
+      const on = thumb.classList.toggle('is-selected')
+      if (on) selectedImages.add(img.src)
+      else selectedImages.delete(img.src)
     })
     grid.appendChild(thumb)
   }
@@ -136,18 +137,21 @@ function noteContext() {
   return { title, tags, url: pageData.url }
 }
 
-async function saveImageAttachment(settings) {
-  if (!selectedImageSrc) return null
-  const res = await fetch(selectedImageSrc)
-  if (!res.ok) throw new Error('image fetch failed')
-  const blob = await res.blob()
-  const extFromType = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/gif': '.gif', 'image/webp': '.webp', 'image/avif': '.avif', 'image/svg+xml': '.svg' }[blob.type]
-  const urlExt = selectedImageSrc.split('?')[0].match(/\.(jpe?g|png|gif|webp|avif|svg)$/i)?.[0]
-  const ext = extFromType ?? urlExt ?? '.jpg'
-  const base = sanitizeFilename(noteContext().title)
-  const relPath = [settings.attachmentsFolder, `${base}${ext}`].filter(Boolean).join('/')
-  const written = await writeFile(vaultHandle, relPath, blob)
-  return written.split('/').pop()
+async function saveImageAttachments(settings) {
+  const names = []
+  for (const src of selectedImages) {
+    const res = await fetch(src)
+    if (!res.ok) throw new Error('image fetch failed')
+    const blob = await res.blob()
+    const extFromType = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/gif': '.gif', 'image/webp': '.webp', 'image/avif': '.avif', 'image/svg+xml': '.svg' }[blob.type]
+    const urlExt = src.split('?')[0].match(/\.(jpe?g|png|gif|webp|avif|svg)$/i)?.[0]
+    const ext = extFromType ?? urlExt ?? '.jpg'
+    const base = sanitizeFilename(noteContext().title)
+    const relPath = [settings.attachmentsFolder, `${base}${ext}`].filter(Boolean).join('/')
+    const written = await writeFile(vaultHandle, relPath, blob)
+    names.push(written.split('/').pop())
+  }
+  return names
 }
 
 async function saveNote({ body }) {
@@ -159,8 +163,8 @@ async function saveNote({ body }) {
   try {
     let markdown = expand(settings.frontmatterTemplate, ctx)
 
-    const imageName = await saveImageAttachment(settings)
-    if (imageName) markdown += `![[${imageName}]]\n\n`
+    const imageNames = await saveImageAttachments(settings)
+    for (const n of imageNames) markdown += `![[${n}]]\n\n`
 
     markdown += body
 
