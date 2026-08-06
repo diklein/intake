@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "Intake for Obsidian",
+  "version": "1.0.0",
+  "description": "Capture the web into your Obsidian vault: notes, selections, images, and full articles as clean Markdown.",
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "scripting",
+    "storage",
+    "nativeMessaging"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Intake for Obsidian",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png",
+      "64": "icons/icon-64.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png",
+    "64": "icons/icon-64.png"
+  }
+}

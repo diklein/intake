@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Intake for Obsidian settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main class="page">
+    <h1>Intake for Obsidian settings</h1>
+
+    <section class="group">
+      <h2>Vault</h2>
+      <div class="picker-row">
+        <button id="pick-vault" class="btn btn--primary">Choose vault folder</button>
+        <span id="vault-name" class="picked-name" role="status"></span>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Where captures go</h2>
+      <label class="field-label">Text files folder</label>
+      <div class="picker-row">
+        <button id="pick-notes" class="btn btn--secondary">Choose folder</button>
+        <span id="notes-folder-name" class="picked-name" role="status"></span>
+      </div>
+      <label class="field-label">Attachments folder</label>
+      <div class="picker-row">
+        <button id="pick-attachments" class="btn btn--secondary">Choose folder</button>
+        <span id="attachments-folder-name" class="picked-name" role="status"></span>
+      </div>
+      <label class="field-label" for="file-extension">File extension</label>
+      <input id="file-extension" class="field field--narrow" type="text" placeholder=".md" />
+    </section>
+
+    <section class="group">
+      <h2>Templates</h2>
+      <label class="field-label" for="filename-template">File name</label>
+      <input id="filename-template" class="field" type="text" />
+      <p class="hint">tokens: {title} {domain} {date} {time}</p>
+      <label class="field-label" for="frontmatter-template">Header</label>
+      <textarea id="frontmatter-template" class="field" rows="8" spellcheck="false"></textarea>
+      <p class="hint">tokens: {title} {url} {domain} {date} {time} {tags}</p>
+    </section>
+
+    <section class="group">
+      <h2>After saving</h2>
+      <label class="check">
+        <input id="open-in-obsidian" type="checkbox" />
+        Open the new note in Obsidian
+      </label>
+    </section>
+
+    <p id="saved" class="saved" role="status"></p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

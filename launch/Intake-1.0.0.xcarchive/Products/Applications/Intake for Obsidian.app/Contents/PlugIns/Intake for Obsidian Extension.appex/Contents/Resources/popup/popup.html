@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Pre-paint popup background follows the OS theme instead of defaulting to white. -->
+  <meta name="color-scheme" content="light dark" />
+  <title>Intake</title>
+  <!-- The stylesheet is INLINE on purpose: external CSS is render-blocking, and Chrome
+       sizes the popup window from the document's first layout — a cold fetch of popup.css
+       (every open right after an extension reload) left that first layout unstyled, so the
+       popup flashed as a tiny white stub before snapping to 360px. Inline, the first layout
+       is styled and full-size in the same instant the document exists. -->
+  <style>
+    /* Intake popup — same UI anatomy as Platinum Capture (the diklein.com design system in
+       miniature): warm red accent, flat corners everywhere except buttons and inputs
+       (shared 8px radius), square photo corners. System font, not Söhne — Intake is public
+       and the site's font license stays with the site. Dark mode follows the system. */
+
+    :root {
+      --bg: lab(100% 0 0);
+      --fg: lab(2.48213% -0.544049 -1.30067);
+      --muted: lab(39.6943% -1.60605 -3.28265);
+      --accent: lab(39.9645% 95.9579 96.0495);
+      --accent-fill: lab(39.9645% 95.9579 96.0495); /* deep red carrying light text, both themes */
+      --border: lab(86.0896% -0.985116 -1.98125);
+      --border-strong: lab(58.2523% -1.30194 -2.63522);
+      --surface: lab(93.0497% -0.985801 -1.98162);
+      --surface-subtle: color-mix(in oklab, var(--surface) 50%, var(--bg));
+      --on-accent: lab(97.6882% -0.8232 -1.65225);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: lab(5.27481% -0.922956 -2.11741);
+        --fg: lab(90.7281% -0.822723 -1.65201);
+        --muted: lab(57.0949% -1.61883 -3.28933);
+        --accent: lab(57.0017% 75.5813 53.334);
+        --accent-fill: lab(40.3307% 86.0561 82.1025);
+        --border: lab(18.8127% -1.57347 -3.26655);
+        --border-strong: lab(44.3345% -1.61025 -3.28476);
+        --surface: lab(10.6913% -1.54661 -3.25424);
+        --surface-subtle: color-mix(in oklab, var(--surface) 50%, var(--bg));
+      }
+    }
+
+    [hidden] { display: none !important; }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Root owns viewport scrolling and the pre-paint background — the popup never scrolls
+       (the image grid scrolls internally), so nothing can flash in a corner on resize. */
+    html {
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      color: var(--fg);
+      background: var(--bg);
+      width: 360px;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background-color: var(--accent-fill);
+      color: #fff;
+    }
+
+    /* Keyboard focus — the site's accent ring (outline is the reliable half; the halo is depth). */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+      box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent) 22%, transparent);
+    }
+
+    /* ── First-run setup ────────────────────────── */
+
+    .setup {
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .setup-copy {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    /* ── Sections ───────────────────────────────── */
+    /* Whitespace (#main's gap), not rules, separates the sections. */
+
+    #main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-top: 16px;
+    }
+
+    .section {
+      padding: 0 16px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 7px;
+    }
+
+    /* The site's .section-label recipe, in foreground ink: every input carries its label
+       on top (no placeholders — labels don't vanish when you start typing). */
+    .section-label {
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--fg);
+    }
+
+    .section > .section-label {
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    /* ── Inputs (textarea + text fields): one recipe, the site's input anatomy — 8px radius
+          to match the buttons, boundary-grade border, transparent ground, soft accent focus
+          (border warms + faint halo, no hard outline). */
+
+    textarea,
+    .field {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 1.5;
+      color: var(--fg);
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+    }
+
+    textarea {
+      min-height: 64px;
+      resize: vertical;
+    }
+
+    textarea:focus-visible,
+    .field:focus-visible {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 12%, transparent);
+    }
+
+    /* ── Image grid ─────────────────────────────── */
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      max-height: 174px;
+      overflow-y: auto;
+    }
+
+    /* Square corners — photos on the site never round. Selection is the accent doing its one
+       job; hover echoes the site's photo-grid dim. */
+    .image-thumb {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      background: var(--surface-subtle);
+    }
+
+    .image-thumb:hover img {
+      opacity: 0.85;
+    }
+
+    .image-thumb.is-selected {
+      border-color: var(--accent);
+    }
+
+    .image-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.2s;
+    }
+
+    /* ── Footer / buttons ───────────────────────── */
+
+    .footer {
+      padding: 0 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* The site's Button anatomy: 8px radius, medium weight, 36px height, instant press
+       (translate + scale), color-mixed hover instead of a brightness filter (the filter
+       promotes a compositing layer and makes the label's glyphs shimmer). Primary carries
+       the accent FILL (deep red in dark too, so the light label always clears AA). */
+    .btn {
+      display: block;
+      width: 100%;
+      height: 36px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background-color 0.15s, color 0.15s, translate 0.15s, scale 0.15s;
+    }
+
+    .btn:active:not(:disabled) {
+      translate: 0 1px;
+      scale: 0.98;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .btn--primary {
+      background: var(--accent-fill);
+      color: var(--on-accent);
+    }
+
+    .btn--primary:hover:not(:disabled) {
+      background: color-mix(in oklab, var(--accent-fill) 90%, black);
+    }
+
+    /* Secondary — the site's quiet variant: surface fill, foreground ink, border on hover's
+       ground (not the text), never darker than the label can read. */
+    .btn--secondary {
+      background: var(--surface);
+      color: var(--fg);
+    }
+
+    .btn--secondary:hover:not(:disabled) {
+      background: var(--border);
+    }
+
+    .status {
+      font-size: 12.5px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Empty status reserves no height — the footer's bottom padding stays tight under the
+       button until there's actually something to say. */
+    .status:empty {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <div id="setup" class="setup" hidden>
+      <button id="setup-btn" class="btn btn--primary">Choose vault folder</button>
+    </div>
+
+    <div id="main">
+      <section class="section">
+        <label class="section-label" for="text-input">Selected text</label>
+        <textarea id="text-input" rows="4"></textarea>
+      </section>
+
+      <!-- Hidden until the page actually yields images — an imageless page simply has no
+           Image section, and the popup never resizes to remove it. -->
+      <section class="section" id="section-image" hidden>
+        <div class="section-header">
+          <span class="section-label">Images</span>
+        </div>
+        <div class="image-grid" id="image-grid"></div>
+      </section>
+
+      <section class="section">
+        <label class="section-label" for="title-input">Title</label>
+        <input type="text" id="title-input" class="field" />
+      </section>
+
+      <section class="section">
+        <label class="section-label" for="tags-input">Tags</label>
+        <input type="text" id="tags-input" class="field" />
+      </section>
+
+      <div class="footer">
+        <button id="article-btn" class="btn btn--secondary" title="Save this page’s article text to your vault as clean Markdown">Capture full article</button>
+        <button id="save-btn" class="btn btn--primary">Send to Obsidian</button>
+        <p id="status" class="status" role="status"></p>
+      </div>
+    </div>
+
+  </div>
+  <!-- Classic script, bundled by esbuild — same loading behavior as Platinum Capture.
+       type="module" would defer execution past first paint and fetch a 3-file import
+       graph first; the bundle runs during parse. Source: popup.js + ../lib/*. -->
+  <script src="../dist/popup.js"></script>
+</body>
+</html>
