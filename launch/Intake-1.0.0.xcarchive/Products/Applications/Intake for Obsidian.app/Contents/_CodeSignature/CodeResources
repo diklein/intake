@@ -6,11 +6,11 @@
 	<dict>
 		<key>Resources/AppIcon.icns</key>
 		<data>
-		wLVI+VB/puL/iez3kk92ca/XGTE=
+		oA1GgyoH/TB9zbrwz+1zEMHZWVk=
 		</data>
 		<key>Resources/Assets.car</key>
 		<data>
-		bCO0tRumKR2tL4L78is2G4GZbHE=
+		XErUs8B4RUwi3cmCwWJPQruX5J8=
 		</data>
 		<key>Resources/Base.lproj/Main.html</key>
 		<data>
@@ -18,15 +18,15 @@
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/Info.plist</key>
 		<data>
-		WPeDgV+2ZR2ZJsO53umLdrA7ueo=
+		6AUSF8b0kqKRvDqd1Anfkoh2KRA=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/MainMenu.nib</key>
 		<data>
-		lvJIEw0kEPh2lsG/Czwcqn2VcQo=
+		VKKrpjGNUu7msx7AKUdC7PVgalE=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib</key>
 		<data>
-		XjrPPLH76h/uBzPFuuna03bwESY=
+		ISSusV0hhxP++TVlxHVzOtnl+io=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib</key>
 		<data>
@@ -51,7 +51,7 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			U5rC52zs2lzzDRX7OIcVqVS4c1A=
+			kp9LLKZPICph3kl3HfQOW3IMZi0=
 			</data>
 			<key>requirement</key>
 			<string>identifier "com.diklein.intake.Extension" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: David Klein (ZV7KV8YPZ3)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
@@ -60,14 +60,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			mg9zCO3OuqE51/CMqYnybGO6IhnW70/TJX/m3HrpGpg=
+			/zvIUDQF4JqPwlqdRVP7k/oXofQ6csIP4Gq8CnYfntI=
 			</data>
 		</dict>
 		<key>Resources/Assets.car</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			o9Rezd3mX6aEh7h6AxY+n4ITN6igApEy6RI5YJA3AEc=
+			BN9SoLYfdDR4azab0BzDclVr0p61gvmLLnbMeFQOxgc=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.html</key>
@@ -81,21 +81,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			POGYLFjNIkCHkXAy7IEjY+mRAG8Q3tu9ro3LviNLEbg=
+			deZmaW+PakVGyHs8HHbL+uWuqwFhqg6fZR+o9SURV/s=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/MainMenu.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			RmAEHpND2q/KnrPYPh3hPT7XmGL7GEiC3Na+bSTZgj8=
+			c77MXXPKKPDSpTE8JPcZHAM54n0z6/4Y6cGkaRurd/I=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			nR5jq5pgFJ7TbHKRr6gmR/l+mZSFwFZ/PdrNnwjQR1Y=
+			Uxf1fzQuMrc3vfdWjfMVryUmrsMQQedzBfh3L2fXEdI=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib</key>
