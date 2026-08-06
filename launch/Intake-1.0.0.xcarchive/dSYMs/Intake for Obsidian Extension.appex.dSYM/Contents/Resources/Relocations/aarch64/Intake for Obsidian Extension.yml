@@ -1,6 +1,6 @@
 ---
 triple:          'arm64-apple-darwin'
-binary-path:     '/tmp/claude-501/intake-dd/Build/Intermediates.noindex/ArchiveIntermediates/Intake for Obsidian/IntermediateBuildFilesPath/UninstalledProducts/macosx/Intake for Obsidian Extension.appex/Contents/MacOS/Intake for Obsidian Extension'
+binary-path:     '/Users/tehdik/Library/Developer/Xcode/DerivedData/Intake_for_Obsidian-bqypaxmmtintnrgwsjwajhuhponm/Build/Intermediates.noindex/ArchiveIntermediates/Intake for Obsidian/IntermediateBuildFilesPath/UninstalledProducts/macosx/Intake for Obsidian Extension.appex/Contents/MacOS/Intake for Obsidian Extension'
 relocations:
   - { offset: 0xB1E33, size: 0x8, addend: 0x0, symName: '_$sIeg_IeyB_TR', symObjAddr: 0x1988, symBinAddr: 0x100002D70, symSize: 0x2C }
   - { offset: 0xB211A, size: 0x8, addend: 0x0, symName: '_$s29Intake_for_Obsidian_Extension09SafariWebD7HandlerCfETo', symObjAddr: 0x3498, symBinAddr: 0x100004880, symSize: 0x4 }

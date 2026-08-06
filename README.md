@@ -1,6 +1,6 @@
 # Intake for Obsidian
 
-Capture the web into your Obsidian vault. A browser extension for Chrome and Safari that writes notes, selections, images, and full articles straight into the vault as clean Markdown — no companion app, no staging folders, no sync service.
+Capture the web into your Obsidian vault. A browser extension for Chrome and Safari that writes notes, images, and full articles straight into the vault as clean Markdown — no companion app, no staging folders, no sync service.
 
 ## How it works
 

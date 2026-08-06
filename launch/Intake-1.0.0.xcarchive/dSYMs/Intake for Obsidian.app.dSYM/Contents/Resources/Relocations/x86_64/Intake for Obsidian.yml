@@ -1,5 +1,5 @@
 ---
 triple:          'x86_64-apple-darwin'
-binary-path:     '/tmp/claude-501/intake-dd/Build/Intermediates.noindex/ArchiveIntermediates/Intake for Obsidian/InstallationBuildProductsLocation/Applications/Intake for Obsidian.app/Contents/MacOS/Intake for Obsidian'
+binary-path:     '/Users/tehdik/Library/Developer/Xcode/DerivedData/Intake_for_Obsidian-bqypaxmmtintnrgwsjwajhuhponm/Build/Intermediates.noindex/ArchiveIntermediates/Intake for Obsidian/InstallationBuildProductsLocation/Applications/Intake for Obsidian.app/Contents/MacOS/Intake for Obsidian'
 relocations:     []
 ...

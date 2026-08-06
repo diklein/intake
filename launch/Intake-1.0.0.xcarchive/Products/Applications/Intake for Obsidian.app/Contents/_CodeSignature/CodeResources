@@ -18,15 +18,15 @@
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/Info.plist</key>
 		<data>
-		jyCFOphcCzI/rHbMJ6Kmapjlov4=
+		WPeDgV+2ZR2ZJsO53umLdrA7ueo=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/MainMenu.nib</key>
 		<data>
-		3r8y0IKBOCmsr8+k4dJUt44bjfA=
+		lvJIEw0kEPh2lsG/Czwcqn2VcQo=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib</key>
 		<data>
-		mZFWDLpqMoo1okpfnVaB8GkpaqM=
+		XjrPPLH76h/uBzPFuuna03bwESY=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib</key>
 		<data>
@@ -51,7 +51,7 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			s7JuJ9pEVaIXjx09x7NI1SicyZY=
+			U5rC52zs2lzzDRX7OIcVqVS4c1A=
 			</data>
 			<key>requirement</key>
 			<string>identifier "com.diklein.intake.Extension" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: David Klein (ZV7KV8YPZ3)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
@@ -81,21 +81,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			QkBPCS1H04axZ+nEnljXf1/OUPMEgmsFVmm1D7Qqphk=
+			POGYLFjNIkCHkXAy7IEjY+mRAG8Q3tu9ro3LviNLEbg=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/MainMenu.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5y98l5bRxuji0pvqxmG07faX7qqq6d8fmpIzQJAaudM=
+			RmAEHpND2q/KnrPYPh3hPT7XmGL7GEiC3Na+bSTZgj8=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			z2k6mHtjeBX9sFvI8vF1Yc3H4P3HsAhvsMQvLBbYtFQ=
+			nR5jq5pgFJ7TbHKRr6gmR/l+mZSFwFZ/PdrNnwjQR1Y=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib</key>
