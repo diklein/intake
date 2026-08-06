@@ -1,16 +1,32 @@
+/* The wrapper app's one window — the /lab/intake-app-window design, ported verbatim.
+   System font on purpose; light and dark follow the OS. */
+
 * {
     -webkit-user-select: none;
     -webkit-user-drag: none;
     cursor: default;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
     color-scheme: light dark;
-
-    --spacing: 20px;
+    --fg: #17191b;
+    --muted: #5d6468;
+    --border: #e2e4e7;
+    --accent: #e50000;
 }
 
-html {
+@media (prefers-color-scheme: dark) {
+    :root {
+        --fg: #e8eaec;
+        --muted: #9aa1a7;
+        --border: #3a3d40;
+    }
+}
+
+html, body {
     height: 100%;
 }
 
@@ -18,28 +34,90 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--fg);
+}
+
+main {
+    display: flex;
     flex-direction: column;
-
-    gap: var(--spacing);
-    margin: 0 calc(var(--spacing) * 2);
-    height: 100%;
-
-    font: -apple-system-short-body;
+    align-items: center;
     text-align: center;
+    max-width: 400px;
+    padding: 24px 32px 40px;
 }
 
-body:not(.state-on, .state-off) :is(.state-on, .state-off) {
+.mark {
+    color: var(--fg);
+}
+
+h1 {
+    margin-top: 22px;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.tagline {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+.steps {
+    margin-top: 34px;
+    width: 100%;
+    text-align: left;
+    padding-left: 20px;
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+.steps li + li {
+    margin-top: 14px;
+}
+
+button.open-preferences {
+    margin-top: 36px;
+    height: 36px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+button.open-preferences:active {
+    translate: 0 1px;
+    scale: 0.98;
+}
+
+/* Extension state, driven by Script.js toggling body classes. */
+.status {
+    margin-top: 22px;
+    font-size: 12px;
+    color: var(--muted);
+    min-height: 1em;
+}
+
+.status span {
     display: none;
 }
 
-body.state-on :is(.state-off, .state-unknown) {
-    display: none;
-}
+body:not(.state-on):not(.state-off) .state-unknown { display: inline; }
+body.state-on .state-on { display: inline; }
+body.state-off .state-off { display: inline; }
 
-body.state-off :is(.state-on, .state-unknown) {
-    display: none;
-}
-
-button {
-    font-size: 1em;
+.footer {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
 }

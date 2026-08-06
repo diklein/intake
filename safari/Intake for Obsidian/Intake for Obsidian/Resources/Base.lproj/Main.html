@@ -3,17 +3,33 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
-
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
     <link rel="stylesheet" href="../Style.css">
     <script src="../Script.js" defer></script>
 </head>
 <body>
-    <img src="../Icon.png" width="128" height="128" alt="Intake for Obsidian Icon">
-    <p class="state-unknown">You can turn on Intake for Obsidian’s extension in Safari Extensions preferences.</p>
-    <p class="state-on">Intake for Obsidian’s extension is currently on. You can turn it off in Safari Extensions preferences.</p>
-    <p class="state-off">Intake for Obsidian’s extension is currently off. You can turn it on in Safari Extensions preferences.</p>
-    <button class="open-preferences">Quit and Open Safari Extensions Preferences…</button>
+    <main>
+        <svg class="mark" width="64" height="64" viewBox="0 0 128 128" aria-hidden="true">
+            <circle cx="24" cy="24" r="5" fill="currentColor"/><circle cx="40" cy="24" r="5" fill="currentColor"/><circle cx="56" cy="24" r="5" fill="currentColor"/><circle cx="72" cy="24" r="5" fill="currentColor"/><circle cx="88" cy="24" r="5" fill="currentColor"/><circle cx="104" cy="24" r="5" fill="currentColor"/>
+            <circle cx="24" cy="40" r="5" fill="currentColor"/><circle cx="40" cy="40" r="5" fill="currentColor"/><circle cx="56" cy="40" r="5" fill="currentColor"/><circle cx="72" cy="40" r="5" fill="#e50000"/><circle cx="88" cy="40" r="5" fill="#e50000"/>
+            <circle cx="24" cy="56" r="5" fill="#e50000"/><circle cx="40" cy="56" r="5" fill="#e50000"/><circle cx="56" cy="56" r="5" fill="#e50000"/><circle cx="72" cy="56" r="5" fill="#e50000"/><circle cx="88" cy="56" r="5" fill="#e50000"/><circle cx="104" cy="56" r="5" fill="#e50000"/>
+            <circle cx="24" cy="72" r="5" fill="#e50000"/><circle cx="40" cy="72" r="5" fill="#e50000"/><circle cx="56" cy="72" r="5" fill="currentColor"/><circle cx="72" cy="72" r="5" fill="currentColor"/><circle cx="88" cy="72" r="5" fill="currentColor"/><circle cx="104" cy="72" r="5" fill="currentColor"/>
+            <circle cx="24" cy="88" r="5" fill="currentColor"/><circle cx="40" cy="88" r="5" fill="currentColor"/><circle cx="56" cy="88" r="5" fill="currentColor"/><circle cx="72" cy="88" r="5" fill="currentColor"/><circle cx="88" cy="88" r="5" fill="currentColor"/>
+            <circle cx="24" cy="104" r="5" fill="currentColor"/><circle cx="40" cy="104" r="5" fill="currentColor"/><circle cx="56" cy="104" r="5" fill="currentColor"/><circle cx="72" cy="104" r="5" fill="currentColor"/>
+        </svg>
+        <h1>Intake for Obsidian</h1>
+        <p class="tagline">Capture the web into your Obsidian vault.</p>
+        <ol class="steps">
+            <li>Turn on Intake in Safari Settings on the Extensions tab.</li>
+            <li>In Safari, click the Intake button in the toolbar and select your vault folder.</li>
+        </ol>
+        <button class="open-preferences">Open Safari Settings</button>
+        <p class="status">
+            <span class="state-unknown"></span>
+            <span class="state-on">Intake is on in Safari.</span>
+            <span class="state-off">Intake is currently off in Safari.</span>
+        </p>
+        <p class="footer">Step 3? There&rsquo;s no step 3.</p>
+    </main>
 </body>
 </html>
