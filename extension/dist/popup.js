@@ -245,7 +245,6 @@
         const grid = $("image-grid");
         if (!pageData.images.length) return;
         $("section-image").hidden = false;
-        $("image-count").textContent = `${pageData.images.length} found`;
         for (const img of pageData.images) {
           const thumb = document.createElement("div");
           thumb.className = "image-thumb";

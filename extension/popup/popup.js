@@ -96,7 +96,6 @@ function render() {
   // No images → the section never appears at all.
   if (!pageData.images.length) return
   $('section-image').hidden = false
-  $('image-count').textContent = `${pageData.images.length} found`
 
   for (const img of pageData.images) {
     const thumb = document.createElement('div')
