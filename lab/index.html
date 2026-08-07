@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intake mark — pixel-grid lab</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #17191b;
+    --muted: #6b7075;
+    --card: #ffffff;
+    --line: #e4e6e8;
+    --chip-dark: #1e2124;
+    --red: #e50000;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141618;
+      --fg: #e8eaec;
+      --muted: #9aa0a6;
+      --card: #1c1f22;
+      --line: #2c3034;
+      --chip-dark: #0d0e10;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 3rem 1.5rem 5rem;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  main { max-width: 64rem; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
+  h1 em { color: var(--red); font-style: normal; }
+  .lede { color: var(--muted); max-width: 44rem; margin: 0 0 2.5rem; }
+  .lede code, td code {
+    font: .85em ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--line);
+    padding: .1em .35em;
+    border-radius: 4px;
+  }
+  section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  section > h2 {
+    font-size: 1.05rem;
+    margin: 0 0 .2rem;
+    display: flex;
+    align-items: baseline;
+    gap: .6rem;
+  }
+  .badge {
+    font-size: .7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: .15em .55em;
+    border-radius: 99px;
+    color: #fff;
+  }
+  .badge.fixed { background: var(--red); }
+  .badge.ok { background: #2e9e5b; }
+  .geom { color: var(--muted); font-size: .85rem; margin: 0 0 1.1rem; max-width: 46rem; }
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .compare.single { grid-template-columns: 1fr; }
+  figure { margin: 0; }
+  figcaption {
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin-bottom: .5rem;
+  }
+  .zoom {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background:
+      repeating-conic-gradient(rgba(128,128,128,.10) 0% 25%, transparent 0% 50%)
+      0 0 / 16px 16px, var(--card);
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  .zoom img { image-rendering: pixelated; display: block; }
+  .native {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-top: .6rem;
+  }
+  .native span { font-size: .75rem; color: var(--muted); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+  }
+  .chip.light { background: #ffffff; }
+  .chip.dark { background: var(--chip-dark); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: .85rem;
+    margin-top: .25rem;
+  }
+  th, td {
+    text-align: left;
+    padding: .45rem .75rem .45rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th { color: var(--muted); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+  tr:last-child td { border-bottom: none; }
+  @media (max-width: 40rem) { .compare { grid-template-columns: 1fr; } }
+
+  /* ---- in-context mockups (fixed colors: these imitate real environments,
+         so they deliberately don't follow the page theme) ---- */
+  .envgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .env h3 { font-size: .85rem; margin: 0 0 .5rem; }
+  .env .note { font-size: .75rem; color: var(--muted); margin: .5rem 0 0; }
+  .mock { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .mock + .mock { margin-top: .75rem; }
+  .mock img { display: block; }
+
+  .ctb { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+  .ctb .nav { font-size: 14px; letter-spacing: 4px; }
+  .ctb.light { background: #ffffff; }
+  .ctb.light .nav { color: #5f6368; }
+  .ctb.dark { background: #35363a; }
+  .ctb.dark .nav { color: #9aa0a6; }
+  .omni { flex: 1; height: 28px; border-radius: 14px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; }
+  .ctb.light .omni { background: #f1f3f4; color: #202124; }
+  .ctb.dark .omni { background: #202124; color: #e8eaed; }
+  .avatar { width: 22px; height: 22px; border-radius: 50%; background: #c2c7cc; }
+
+  .stb { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+  .stb.light { background: #f3f2f2; }
+  .stb.dark { background: #38383a; }
+  .lights { display: flex; gap: 7px; }
+  .lights span { width: 12px; height: 12px; border-radius: 50%; }
+  .lights span:nth-child(1) { background: #ff5f57; }
+  .lights span:nth-child(2) { background: #febc2e; }
+  .lights span:nth-child(3) { background: #28c840; }
+  .sfield { margin: 0 auto; width: 46%; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .stb.light .sfield { background: rgba(0,0,0,.06); color: #4c4c50; }
+  .stb.dark .sfield { background: rgba(255,255,255,.09); color: #b9b9bd; }
+
+  .extcard { padding: 14px 16px 10px; }
+  .extcard.light { background: #ffffff; color: #202124; }
+  .extcard.dark { background: #292a2d; color: #e8eaed; }
+  .extcard .top { display: flex; gap: 14px; align-items: flex-start; }
+  .extcard .name { font-size: 14px; margin: 0 0 2px; font-weight: 500; }
+  .extcard .desc { font-size: 12px; margin: 0; }
+  .extcard.light .desc { color: #5f6368; }
+  .extcard.dark .desc { color: #9aa0a6; }
+  .extcard .foot { display: flex; align-items: center; gap: 16px; margin-top: 12px; padding-top: 8px; font-size: 12px; }
+  .extcard.light .foot { border-top: 1px solid #e8eaed; color: #1a73e8; }
+  .extcard.dark .foot { border-top: 1px solid #3c4043; color: #8ab4f8; }
+  .toggle { margin-left: auto; width: 30px; height: 14px; border-radius: 7px; position: relative; }
+  .extcard.light .toggle { background: #1a73e8; }
+  .extcard.dark .toggle { background: #8ab4f8; }
+  .toggle::after { content: ""; position: absolute; right: -1px; top: -2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.35); }
+
+  .cws { display: flex; gap: 20px; padding: 20px; align-items: flex-start; }
+  .cws.light { background: #ffffff; color: #1f1f1f; }
+  .cws.dark { background: #1f2124; color: #e8eaed; }
+  .cws h4 { font-size: 18px; margin: 0 0 4px; font-weight: 500; }
+  .cws .by { font-size: 12px; margin: 0 0 4px; }
+  .cws.light .by { color: #474747; }
+  .cws.dark .by { color: #9aa0a6; }
+  .cws .rating { font-size: 12px; margin: 0 0 12px; }
+  .cws.light .rating { color: #474747; }
+  .cws.dark .rating { color: #9aa0a6; }
+  .addbtn { display: inline-block; border-radius: 100px; padding: 9px 18px; font-size: 13px; font-weight: 500; }
+  .cws.light .addbtn { background: #0b57d0; color: #fff; }
+  .cws.dark .addbtn { background: #a8c7fa; color: #062e6f; }
+
+  .dockwrap { background: linear-gradient(135deg, #6a85f1, #a95fd0 60%, #e08787); padding: 34px 16px 12px; display: flex; justify-content: center; }
+  .dock { display: flex; align-items: center; gap: 12px; padding: 8px 14px; border-radius: 22px; background: rgba(255,255,255,.32); border: 1px solid rgba(255,255,255,.35); backdrop-filter: blur(10px); }
+  .dapp { width: 64px; height: 64px; border-radius: 15px; }
+  .dapp.a { background: linear-gradient(180deg, #4dc3fa, #1e7ce8); }
+  .dapp.b { background: linear-gradient(180deg, #fdfdfd, #e8e8ec 55%, #fbd046 55%); }
+  .dapp.c { background: linear-gradient(180deg, #fb5d70, #f2385a); }
+
+  .mas { display: flex; gap: 26px; padding: 26px; align-items: center; background: #ffffff; color: #1d1d1f; }
+  .mas h4 { font-size: 22px; margin: 0 0 2px; font-weight: 600; }
+  .mas .sub { font-size: 14px; color: #6e6e73; margin: 0 0 14px; }
+  .getbtn { display: inline-block; background: #0071e3; color: #fff; border-radius: 14px; padding: 5px 22px; font-size: 13px; font-weight: 600; }
+  @media (max-width: 48rem) { .envgrid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Intake mark — pixel-grid lab</h1>
+  <p class="lede">
+    The small icons are deliberate simplified variants of the full 6×6 mark — a 3×3 grid at
+    16px, a 4×4 grid at 32/48/64px. Those layouts are kept exactly. The fuzziness came from
+    fractional dot diameters (3.5px, 5.5px, 7.9px, 10.5px), which put every dot edge inside a
+    pixel rather than on a boundary. The fix (<code>lab/render-marks.mjs</code>): keep each
+    variant's centers and colors, and round each dot diameter to the integer that lands its
+    edges on pixel boundaries. The 8×8 mac app icon had the same problem
+    (<code>lab/render-appicon.mjs</code>). Zoomed views below are nearest-neighbor scaled; the
+    strips underneath show the icon at retina scale — half its pixel size, one image pixel per
+    device pixel on a 2× display.
+  </p>
+
+  <section>
+    <h2>In context</h2>
+    <p class="geom">Each mockup uses the exact asset the environment picks on a 2× display, at
+    its real point size — so what you see here is what ships. (These imitate their host UIs,
+    so they keep fixed light/dark colors regardless of the page theme.)</p>
+    <div class="envgrid">
+      <div class="env">
+        <h3>Chrome toolbar — 16pt</h3>
+        <div class="mock">
+          <div class="ctb light">
+            <span class="nav">‹ › ↻</span>
+            <span class="omni">diklein.com/intake</span>
+            <img src="../extension/icons/icon-32.png" width="16" height="16" alt="Intake in Chrome toolbar, light">
+            <span class="avatar"></span>
+          </div>
+          <div class="ctb dark">
+            <span class="nav">‹ › ↻</span>
+            <span class="omni">diklein.com/intake</span>
+            <img src="../extension/icons/icon-32.png" width="16" height="16" alt="Intake in Chrome toolbar, dark">
+            <span class="avatar"></span>
+          </div>
+        </div>
+        <p class="note"><code>icon-32.png</code> at 16pt — Chrome picks the 32px asset on a 2× display.</p>
+      </div>
+      <div class="env">
+        <h3>Safari toolbar — 16pt</h3>
+        <div class="mock">
+          <div class="stb light">
+            <span class="lights"><span></span><span></span><span></span></span>
+            <img src="../extension/icons/icon-32.png" width="16" height="16" alt="Intake in Safari toolbar, light">
+            <span class="sfield">diklein.com</span>
+          </div>
+          <div class="stb dark">
+            <span class="lights"><span></span><span></span><span></span></span>
+            <img src="../extension/icons/icon-32.png" width="16" height="16" alt="Intake in Safari toolbar, dark">
+            <span class="sfield">diklein.com</span>
+          </div>
+        </div>
+        <p class="note"><code>icon-32.png</code> at 16pt (Safari shares the extension icon set).</p>
+      </div>
+      <div class="env">
+        <h3>chrome://extensions card — 36pt</h3>
+        <div class="mock">
+          <div class="extcard light">
+            <div class="top">
+              <img src="../extension/icons/icon-128.png" width="36" height="36" alt="Intake on the Chrome extensions page, light">
+              <div>
+                <p class="name">Intake for Obsidian&ensp;1.0.0</p>
+                <p class="desc">Capture the web into your Obsidian vault.</p>
+              </div>
+            </div>
+            <div class="foot"><span>Details</span><span>Remove</span><span class="toggle"></span></div>
+          </div>
+          <div class="extcard dark">
+            <div class="top">
+              <img src="../extension/icons/icon-128.png" width="36" height="36" alt="Intake on the Chrome extensions page, dark">
+              <div>
+                <p class="name">Intake for Obsidian&ensp;1.0.0</p>
+                <p class="desc">Capture the web into your Obsidian vault.</p>
+              </div>
+            </div>
+            <div class="foot"><span>Details</span><span>Remove</span><span class="toggle"></span></div>
+          </div>
+        </div>
+        <p class="note">The card requests 36pt = 72px, so Chrome downscales <code>icon-128.png</code>.</p>
+      </div>
+      <div class="env">
+        <h3>Chrome Web Store listing — 96pt</h3>
+        <div class="mock">
+          <div class="cws light">
+            <img src="../launch/chrome-store-icon-128.png" width="96" height="96" alt="Intake on the Chrome Web Store, light">
+            <div>
+              <h4>Intake for Obsidian</h4>
+              <p class="by">diklein.com</p>
+              <p class="rating">5.0 ★ (12 ratings) · Productivity</p>
+              <span class="addbtn">Add to Chrome</span>
+            </div>
+          </div>
+          <div class="cws dark">
+            <img src="../launch/chrome-store-icon-128.png" width="96" height="96" alt="Intake on the Chrome Web Store, dark">
+            <div>
+              <h4>Intake for Obsidian</h4>
+              <p class="by">diklein.com</p>
+              <p class="rating">5.0 ★ (12 ratings) · Productivity</p>
+              <span class="addbtn">Add to Chrome</span>
+            </div>
+          </div>
+        </div>
+        <p class="note">The store serves the 128px store icon at ~96pt on the listing page.</p>
+      </div>
+      <div class="env">
+        <h3>macOS Dock — 64pt</h3>
+        <div class="mock">
+          <div class="dockwrap">
+            <div class="dock">
+              <span class="dapp a"></span>
+              <span class="dapp b"></span>
+              <img src="../safari/Intake for Obsidian/Intake for Obsidian/Assets.xcassets/AppIcon.appiconset/mac-icon-128@1x.png" width="64" height="64" alt="Intake in the macOS Dock">
+              <span class="dapp c"></span>
+            </div>
+          </div>
+        </div>
+        <p class="note">The 128px icns tier (our dedicated snapped render) at the default 64pt Dock size.</p>
+      </div>
+      <div class="env">
+        <h3>Mac App Store product page — 175pt</h3>
+        <div class="mock">
+          <div class="mas">
+            <img src="../launch/appicon-1024.png" width="175" height="175" alt="Intake on the Mac App Store">
+            <div>
+              <h4>Intake for Obsidian</h4>
+              <p class="sub">Capture the web into your Obsidian vault.</p>
+              <span class="getbtn">Get</span>
+            </div>
+          </div>
+        </div>
+        <p class="note">The App Store scales the 1024 down to the ~175pt product-page hero.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>16 px <span class="badge fixed">re-rendered</span></h2>
+    <p class="geom">3×3 variant. Before: ~3.5px dots, soft fringe on every side. After: 4px
+    dots at the same centers (3 / 8 / 13) — every edge on a pixel boundary, clean 1px gaps.</p>
+    <div class="compare">
+      <figure>
+        <figcaption>Before</figcaption>
+        <div class="zoom"><img src="assets/before/icon-16.png" width="192" height="192" alt="16px icon before, blurry"></div>
+        <div class="native">
+          <span class="chip light"><img src="assets/before/icon-16.png" width="8" height="8" alt=""></span>
+          <span class="chip dark"><img src="assets/before/icon-16.png" width="8" height="8" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+      <figure>
+        <figcaption>After</figcaption>
+        <div class="zoom"><img src="../extension/icons/icon-16.png" width="192" height="192" alt="16px icon after, crisp"></div>
+        <div class="native">
+          <span class="chip light"><img src="../extension/icons/icon-16.png" width="8" height="8" alt=""></span>
+          <span class="chip dark"><img src="../extension/icons/icon-16.png" width="8" height="8" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>32 px <span class="badge fixed">re-rendered</span></h2>
+    <p class="geom">4×4 variant. Before: ~5.5px dots on a 7px pitch, edges inside pixels.
+    After: 5px dots at the same centers (5.5 + 7i) — the half-integer centers put every edge
+    of an odd-diameter dot exactly on a pixel boundary.</p>
+    <div class="compare">
+      <figure>
+        <figcaption>Before</figcaption>
+        <div class="zoom"><img src="assets/before/icon-32.png" width="192" height="192" alt="32px icon before, blurry"></div>
+        <div class="native">
+          <span class="chip light"><img src="assets/before/icon-32.png" width="16" height="16" alt=""></span>
+          <span class="chip dark"><img src="assets/before/icon-32.png" width="16" height="16" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+      <figure>
+        <figcaption>After</figcaption>
+        <div class="zoom"><img src="../extension/icons/icon-32.png" width="192" height="192" alt="32px icon after, crisp"></div>
+        <div class="native">
+          <span class="chip light"><img src="../extension/icons/icon-32.png" width="16" height="16" alt=""></span>
+          <span class="chip dark"><img src="../extension/icons/icon-32.png" width="16" height="16" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>48 px <span class="badge fixed">re-rendered</span></h2>
+    <p class="geom">4×4 variant. Before: a 0.75× downscale of the 64 — ~7.9px dots and a pitch
+    that drifted to a 10 / 11 / 10 rhythm. After: 8px dots on a regular 10px pitch (centers
+    moved at most 0.5px), integer edges, symmetric margins.</p>
+    <div class="compare">
+      <figure>
+        <figcaption>Before</figcaption>
+        <div class="zoom"><img src="assets/before/icon-48.png" width="192" height="192" alt="48px icon before, blurry"></div>
+        <div class="native">
+          <span class="chip light"><img src="assets/before/icon-48.png" width="24" height="24" alt=""></span>
+          <span class="chip dark"><img src="assets/before/icon-48.png" width="24" height="24" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+      <figure>
+        <figcaption>After</figcaption>
+        <div class="zoom"><img src="../extension/icons/icon-48.png" width="192" height="192" alt="48px icon after, crisp"></div>
+        <div class="native">
+          <span class="chip light"><img src="../extension/icons/icon-48.png" width="24" height="24" alt=""></span>
+          <span class="chip dark"><img src="../extension/icons/icon-48.png" width="24" height="24" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>64 px <span class="badge fixed">re-rendered</span></h2>
+    <p class="geom">4×4 variant. Before: ~10.5px dots on a 14px pitch — the odd half-pixel of
+    diameter smears both edges. After: 10px dots at the same centers (11 + 14i) — integer
+    edges, only the circle's corners anti-alias.</p>
+    <div class="compare">
+      <figure>
+        <figcaption>Before</figcaption>
+        <div class="zoom"><img src="assets/before/icon-64.png" width="192" height="192" alt="64px icon before, blurry"></div>
+        <div class="native">
+          <span class="chip light"><img src="assets/before/icon-64.png" width="32" height="32" alt=""></span>
+          <span class="chip dark"><img src="assets/before/icon-64.png" width="32" height="32" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+      <figure>
+        <figcaption>After</figcaption>
+        <div class="zoom"><img src="../extension/icons/icon-64.png" width="192" height="192" alt="64px icon after, crisp"></div>
+        <div class="native">
+          <span class="chip light"><img src="../extension/icons/icon-64.png" width="32" height="32" alt=""></span>
+          <span class="chip dark"><img src="../extension/icons/icon-64.png" width="32" height="32" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>128 px <span class="badge fixed">recolored</span></h2>
+    <p class="geom">The full 6×6 mark: 10px dots on integer centers — the geometry was already
+    on the pixel grid, so it is unchanged. But this size (and the store icon and master SVG)
+    still had black <code>#17191b</code> dots, missing the black→gray <code>#7d8288</code>
+    dark-mode update the smaller sizes got. Now recolored to match.</p>
+    <div class="compare">
+      <figure>
+        <figcaption>Before — black dots</figcaption>
+        <div class="zoom"><img src="assets/before/icon-128.png" width="256" height="256" alt="128px icon before, black dots"></div>
+        <div class="native">
+          <span class="chip light"><img src="assets/before/icon-128.png" width="64" height="64" alt=""></span>
+          <span class="chip dark"><img src="assets/before/icon-128.png" width="64" height="64" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+      <figure>
+        <figcaption>After — gray dots</figcaption>
+        <div class="zoom"><img src="../extension/icons/icon-128.png" width="256" height="256" alt="128px icon after, gray dots"></div>
+        <div class="native">
+          <span class="chip light"><img src="../extension/icons/icon-128.png" width="64" height="64" alt=""></span>
+          <span class="chip dark"><img src="../extension/icons/icon-128.png" width="64" height="64" alt=""></span>
+          <span>actual size (2× display)</span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>1024 px mac app icon <span class="badge fixed">re-rendered</span></h2>
+    <p class="geom">The 8×8 grid on the white squircle. Before: ~44.6px dots on a 71px pitch —
+    fractional edges at 1:1, and the odd pitch meant the 512px half-scale (how it renders on a
+    non-retina display) landed every edge on a half-pixel. After: 44px dots on a 72px pitch,
+    first center at 260 — all even numbers, so both the 1024 and its 512 half-scale sit
+    exactly on the grid (centers moved at most 3.5px; the background layer is untouched).
+    The full AppIcon set was regenerated from it, with dedicated snapped renders at 256 and
+    128 too. Detail below: the top-left dots at 3× (1.5× on a retina display).</p>
+    <div class="compare">
+      <figure>
+        <figcaption>Before</figcaption>
+        <div class="zoom"><img src="assets/before-1024-detail.png" width="348" height="348" alt="1024 app icon detail before, soft edges"></div>
+      </figure>
+      <figure>
+        <figcaption>After</figcaption>
+        <div class="zoom"><img src="assets/after-1024-detail.png" width="348" height="348" alt="1024 app icon detail after, crisp edges"></div>
+      </figure>
+    </div>
+    <div class="compare single" style="margin-top:1.25rem">
+      <figure>
+        <figcaption>After — full icon at retina scale (512pt)</figcaption>
+        <div class="zoom"><img src="../launch/appicon-1024.png" width="512" height="512" alt="fixed 1024 app icon"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>Geometry summary</h2>
+    <table>
+      <thead>
+        <tr><th>Size</th><th>Before</th><th>After (snapped)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>16</td><td>3×3, d ≈ 3.5, pitch 5</td><td>d = 4 at the same centers (3 + 5i) → integer edges</td></tr>
+        <tr><td>32</td><td>4×4, d ≈ 5.5, pitch 7</td><td>d = 5 at the same centers (5.5 + 7i) → integer edges</td></tr>
+        <tr><td>48</td><td>4×4, d ≈ 7.9, pitch 10 / 11 / 10</td><td>d = 8, regular pitch 10 (centers 9 + 10i) → integer edges</td></tr>
+        <tr><td>64</td><td>4×4, d ≈ 10.5, pitch 14</td><td>d = 10 at the same centers (11 + 14i) → integer edges</td></tr>
+        <tr><td>128</td><td>full 6×6 mark, black dots</td><td>geometry unchanged (already aligned); recolored black → gray</td></tr>
+        <tr><td>1024</td><td>8×8 mark, d ≈ 44.6, pitch 71 (odd)</td><td>d = 44, pitch 72, first center 260 — even values, aligned at 1024 and at 512 half-scale</td></tr>
+      </tbody>
+    </table>
+    <p class="geom" style="margin:.9rem 0 0">Regenerate any time: <code>node lab/render-marks.mjs</code>
+    writes the extension icons (Chrome and Safari share them), and <code>node lab/render-appicon.mjs</code>
+    rebuilds the mac AppIcon set from the original artwork kept in <code>lab/assets/before/</code>.</p>
+  </section>
+</main>
+</body>
+</html>
