@@ -23,7 +23,8 @@ import { renderDots, encodePng } from './pnglib.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-const G = [0x7d, 0x82, 0x88]; // gray
+const G = [0x7d, 0x82, 0x88]; // gray — toolbar/UI surfaces that must survive dark mode
+const D = [0x17, 0x19, 0x1b]; // dark — brand/marketing surfaces (store listing)
 const R = [0xe5, 0x00, 0x00]; // red
 const _ = null;
 
@@ -66,3 +67,14 @@ for (const spec of SIZES) {
   writeFileSync(join(ROOT, 'extension/icons', name), png);
   console.log(`wrote extension/icons/${name} (d=${spec.d}, pitch=${spec.pitch}, first=${spec.first})`);
 }
+
+// The Chrome Web Store LISTING icon (a dashboard upload, not part of the package)
+// is a brand surface: the mark keeps its black ink there, unlike the in-package
+// icons above, whose gray survives dark-mode toolbars and chrome://extensions.
+const store = SIZES.find((s) => s.size === 128);
+const storePattern = store.pattern.map((row) => row.map((c) => (c === G ? D : c)));
+writeFileSync(
+  join(ROOT, 'launch/chrome-store-icon-128.png'),
+  encodePng(128, renderDots({ ...store, pattern: storePattern }))
+);
+console.log('wrote launch/chrome-store-icon-128.png (black ink, store listing)');
