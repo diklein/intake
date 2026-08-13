@@ -43,7 +43,7 @@ main {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    max-width: 400px;
+    max-width: 445px;
     padding: 24px 32px 40px;
 }
 
@@ -89,6 +89,12 @@ button.open-preferences {
     font-family: inherit;
     font-size: 13.5px;
     font-weight: 600;
+    cursor: pointer;
+    transition: background 150ms ease;
+}
+
+button.open-preferences:hover {
+    background: #c40000;
 }
 
 button.open-preferences:active {
