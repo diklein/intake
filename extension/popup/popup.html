@@ -58,14 +58,29 @@
       background: var(--bg);
     }
 
+    /* Flex column with a height cap: on image-rich pages the content used to outgrow
+       Safari's popover and push "Send to Obsidian" below the fold. The sections are
+       budgeted to fit this cap outright (textarea rows, the grid's max-height), with the
+       footer a fixed sibling below the normally non-scrolling #main. 588px sits under
+       Chrome's 600px popup ceiling; shorter content still sizes the popup naturally
+       (max-, not height). The min-height: 0 links let the flex chain shrink #main. */
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 14px;
       color: var(--fg);
       background: var(--bg);
       width: 360px;
+      max-height: 588px;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
       -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
 
     ::selection {
@@ -104,6 +119,38 @@
       flex-direction: column;
       gap: 24px;
       padding-top: 16px;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    /* The layout is budgeted to FIT the height cap (like the Obsidian Web Clipper's fixed
+       chrome), so #main should never actually scroll — overflow-y: auto is a safety valve
+       for zoom/large-font setups, and its scrollbar is hidden entirely so the popup never
+       shows an outer bar. The image grid is the one real scroller. */
+    #main::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* The grid's slim 8px bar (Safari popovers use classic always-visible scrollbars,
+       whose default width squeezed the four columns and read as a growing right margin;
+       a styled bar has a deterministic width in both engines). The thumb stays invisible
+       until hover — the half-row peek carries the affordance at rest — and the reserved
+       gutter means the columns never shift. */
+    .image-grid::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .image-grid::-webkit-scrollbar-thumb {
+      background: transparent;
+      border-radius: 4px;
+    }
+
+    .image-grid:hover::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+    }
+
+    .image-grid::-webkit-scrollbar-track {
+      background: transparent;
     }
 
     .section {
@@ -161,19 +208,31 @@
 
     /* ── Image grid ─────────────────────────────── */
 
+    /* Explicit 78px rows, NOT aspect-ratio on the thumbs: Safari ignored aspect-ratio on
+       these grid items and collapsed each cell to the image's intrinsic strip, so photos
+       rendered as cropped slivers on image-heavy pages. 78px ≈ the column width at the
+       grid's 328px content measure, so cells stay square in both engines by construction.
+       max-height shows one full row plus a half-row peek — the visible crop is the
+       scroll affordance — sized so the whole popup (every section + footer) fits the
+       body's height cap without outer scrolling. The negative right margin lets the slim scrollbar ride in the
+       section's 16px gutter instead of squeezing the four columns, and scrollbar-gutter
+       keeps the columns the same width whether or not the grid scrolls. */
     .image-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 78px;
       gap: 6px;
-      max-height: 174px;
+      max-height: 123px;
       overflow-y: auto;
+      margin-right: -16px;
+      padding-right: 8px;
+      scrollbar-gutter: stable;
     }
 
     /* Square corners — photos on the site never round. Selection is the accent doing its one
        job; hover echoes the site's photo-grid dim. */
     .image-thumb {
       position: relative;
-      aspect-ratio: 1;
       overflow: hidden;
       cursor: pointer;
       border: 2px solid transparent;
@@ -198,8 +257,11 @@
 
     /* ── Footer / buttons ───────────────────────── */
 
+    /* A flex sibling BELOW the scroller (see the markup note): the buttons cannot move —
+       not with scrolling, not with Safari's rubber-band bounce. */
     .footer {
-      padding: 0 16px 12px;
+      flex-shrink: 0;
+      padding: 16px 16px 12px;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -275,7 +337,7 @@
     <div id="main">
       <section class="section">
         <label class="section-label" for="text-input">Selected text</label>
-        <textarea id="text-input" rows="4"></textarea>
+        <textarea id="text-input" rows="3"></textarea>
       </section>
 
       <!-- Hidden until the page actually yields images — an imageless page simply has no
@@ -296,12 +358,15 @@
         <label class="section-label" for="tags-input">Tags</label>
         <input type="text" id="tags-input" class="field" />
       </section>
+    </div>
 
-      <div class="footer">
-        <button id="article-btn" class="btn btn--secondary" title="Save this page’s article text to your vault as clean Markdown">Capture full article</button>
-        <button id="save-btn" class="btn btn--primary">Send to Obsidian</button>
-        <p id="status" class="status" role="status"></p>
-      </div>
+    <!-- OUTSIDE #main, like the Obsidian Web Clipper's button row: the footer is a flex
+         sibling of the scroller, so it can never move — not with scrolling, and not with
+         Safari's rubber-band bounce (a sticky footer inside the scroller rode the bounce). -->
+    <div class="footer" id="footer">
+      <button id="article-btn" class="btn btn--secondary" title="Save this page’s article text to your vault as clean Markdown">Capture full article</button>
+      <button id="save-btn" class="btn btn--primary">Send to Obsidian</button>
+      <p id="status" class="status" role="status"></p>
     </div>
 
   </div>

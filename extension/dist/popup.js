@@ -211,6 +211,7 @@
           vaultHandle = handle;
           if (!handle) {
             $("main").hidden = true;
+            $("footer").hidden = true;
             $("setup").hidden = false;
             $("setup-btn").addEventListener("click", () => chrome.runtime.openOptionsPage());
           }

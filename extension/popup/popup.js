@@ -49,6 +49,7 @@ async function init() {
     vaultHandle = handle
     if (!handle) {
       $('main').hidden = true
+      $('footer').hidden = true // lives outside #main (fixed under the scroller) — hide it with it
       $('setup').hidden = false
       $('setup-btn').addEventListener('click', () => chrome.runtime.openOptionsPage())
     }
