@@ -133,20 +133,16 @@
 
     /* The grid's slim 8px bar (Safari popovers use classic always-visible scrollbars,
        whose default width squeezed the four columns and read as a growing right margin;
-       a styled bar has a deterministic width in both engines). The thumb stays invisible
-       until hover — the half-row peek carries the affordance at rest — and the reserved
-       gutter means the columns never shift. */
+       a styled bar has a deterministic width in both engines). It shows whenever the
+       grid actually scrolls — the popup's only visible bar, since #main never scrolls —
+       and the reserved gutter means the columns never shift. */
     .image-grid::-webkit-scrollbar {
       width: 8px;
     }
 
     .image-grid::-webkit-scrollbar-thumb {
-      background: transparent;
-      border-radius: 4px;
-    }
-
-    .image-grid:hover::-webkit-scrollbar-thumb {
       background: var(--border-strong);
+      border-radius: 4px;
     }
 
     .image-grid::-webkit-scrollbar-track {
@@ -224,8 +220,12 @@
       gap: 6px;
       max-height: 123px;
       overflow-y: auto;
-      margin-right: -16px;
-      padding-right: 8px;
+      /* The bar renders at the border-box edge, so the negative margin PLACES it: -12px
+         centers the 8px bar in the section's 16px gutter (4px air on both sides of it)
+         instead of pressing it against the popup edge. padding 4 + bar 8 keep the four
+         columns at the same 328px measure. */
+      margin-right: -12px;
+      padding-right: 4px;
       scrollbar-gutter: stable;
     }
 
@@ -258,10 +258,11 @@
     /* ── Footer / buttons ───────────────────────── */
 
     /* A flex sibling BELOW the scroller (see the markup note): the buttons cannot move —
-       not with scrolling, not with Safari's rubber-band bounce. */
+       not with scrolling, not with Safari's rubber-band bounce. Uniform 16px padding so
+       the bottom margin equals the sides. */
     .footer {
       flex-shrink: 0;
-      padding: 16px 16px 12px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 8px;
