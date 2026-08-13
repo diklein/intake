@@ -220,7 +220,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Safari-only manifest tweak; the shared source manifest stays Chrome-shaped.\n# Safari's Extensions list shows the manifest name -> 'Intake' (the full name\n# is the Chrome Web Store listing name). Icons stay PNG: an SVG action icon\n# rendered as a broken placeholder in Safari's Extensions list (2026-08).\nMANIFEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/manifest.json\"\n/usr/bin/python3 - \"$MANIFEST\" <<'EOF'\nimport json, sys\npath = sys.argv[1]\nm = json.load(open(path))\nm['name'] = 'Intake'\njson.dump(m, open(path, 'w'), indent=2)\nEOF\n";
+			shellScript = "# Safari-only manifest tweak; the shared source manifest stays Chrome-shaped.\n# Safari's Extensions list shows the manifest name -> 'Intake' (the full name\n# is the Chrome Web Store listing name). Icons stay PNG: an SVG action icon\n# rendered as a broken placeholder in Safari's Extensions list (2026-08).\n# Debug builds get a distinct identity -- 'Intake Dev' + the blue-dot icons\n# (extension/icons-dev, from lab/render-marks.mjs) -- so the local build is\n# unmistakable next to the App Store copy in Safari's Extensions list.\nRESOURCES=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nMANIFEST=\"$RESOURCES/manifest.json\"\nNAME='Intake'\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  NAME='Intake Dev'\n  cp \"${SRCROOT}/../../extension/icons-dev/\"icon-*.png \"$RESOURCES/icons/\"\nfi\n/usr/bin/python3 - \"$MANIFEST\" \"$NAME\" <<'EOF'\nimport json, sys\npath, name = sys.argv[1], sys.argv[2]\nm = json.load(open(path))\nm['name'] = name\njson.dump(m, open(path, 'w'), indent=2)\nEOF\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

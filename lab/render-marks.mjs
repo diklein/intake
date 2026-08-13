@@ -16,7 +16,7 @@
 //
 // Usage: node lab/render-marks.mjs
 
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderDots, encodePng } from './pnglib.mjs';
@@ -72,6 +72,21 @@ for (const spec of SIZES) {
   const name = `icon-${spec.size}.png`;
   writeFileSync(join(ROOT, 'extension/icons', name), png);
   console.log(`wrote extension/icons/${name} (d=${spec.d}, pitch=${spec.pitch}, first=${spec.first})`);
+}
+
+// Dev icons — the Safari Debug build swaps these in (see the 'Safari manifest
+// name' build phase) so the local extension is unmistakable next to the App
+// Store copy in Safari's Extensions list. Deliberately WILD, nothing like the
+// mark: the full grid (no missing corner dots) in a blue/pink checkerboard —
+// reads as a loud test-pattern swatch at every size, never as Intake.
+const B = [0x0a, 0x84, 0xff]; // dev blue
+const P = [0xff, 0x2d, 0x55]; // dev pink
+mkdirSync(join(ROOT, 'extension/icons-dev'), { recursive: true });
+for (const spec of SIZES) {
+  const devPattern = spec.pattern.map((row, y) => row.map((_, x) => ((x + y) % 2 ? P : B)));
+  const name = `icon-${spec.size}.png`;
+  writeFileSync(join(ROOT, 'extension/icons-dev', name), encodePng(spec.size, renderDots({ ...spec, pattern: devPattern })));
+  console.log(`wrote extension/icons-dev/${name} (dev checkerboard)`);
 }
 
 // The Chrome Web Store LISTING icon (a dashboard upload, not part of the package)
