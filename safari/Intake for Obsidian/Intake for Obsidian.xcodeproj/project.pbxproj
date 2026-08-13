@@ -192,6 +192,7 @@
 				9A4A1D1F3023A87700923433 /* Sources */,
 				9A4A1D203023A87700923433 /* Frameworks */,
 				9A4A1D213023A87700923433 /* Resources */,
+				9A4A1DFF3023A87700923433 /* Safari manifest name */,
 			);
 			buildRules = (
 			);
@@ -205,6 +206,23 @@
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9A4A1DFF3023A87700923433 /* Safari manifest name */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Safari manifest name";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Safari-only manifest tweaks; the shared source manifest stays Chrome-shaped.\n# - name: Safari's Extensions list shows the manifest name -> 'Intake'\n#   (the full name is the Chrome Web Store listing name).\n# - toolbar icon: Safari supports adaptive SVG action icons (black ink in\n#   light mode, gray in dark); Chrome only takes PNGs, which stay gray.\nMANIFEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/manifest.json\"\n/usr/bin/python3 - \"$MANIFEST\" <<'EOF'\nimport json, sys\npath = sys.argv[1]\nm = json.load(open(path))\nm['name'] = 'Intake'\nm['action']['default_icon'] = 'icons/toolbar.svg'\njson.dump(m, open(path, 'w'), indent=2)\nEOF\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXProject section */
 		9A4A1D003023A87500923433 /* Project object */ = {
@@ -447,6 +465,7 @@
 				CURRENT_PROJECT_VERSION = 5;
 				CODE_SIGN_ENTITLEMENTS = "Intake for Obsidian Extension/Intake for Obsidian Extension.entitlements";
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -483,6 +502,7 @@
 				CURRENT_PROJECT_VERSION = 5;
 				CODE_SIGN_ENTITLEMENTS = "Intake for Obsidian Extension/Intake for Obsidian Extension.entitlements";
 				ENABLE_APP_SANDBOX = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;

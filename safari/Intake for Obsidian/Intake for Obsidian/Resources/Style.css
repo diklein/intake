@@ -24,6 +24,12 @@
         --muted: #9aa1a7;
         --border: #3a3d40;
     }
+
+    /* Gray ink, not white: same reasoning as the gray toolbar icons — the
+       mark should sit back on the dark ground, not glow against it. */
+    .mark {
+        color: var(--muted);
+    }
 }
 
 html, body {

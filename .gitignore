@@ -3,3 +3,6 @@ node_modules/
 xcuserdata/
 DerivedData/
 build/
+
+# Xcode archives are build artifacts; uploads go through the Organizer
+launch/*.xcarchive/
