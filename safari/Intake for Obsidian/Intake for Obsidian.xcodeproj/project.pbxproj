@@ -220,7 +220,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Safari-only manifest tweaks; the shared source manifest stays Chrome-shaped.\n# - name: Safari's Extensions list shows the manifest name -> 'Intake'\n#   (the full name is the Chrome Web Store listing name).\n# - toolbar icon: Safari supports adaptive SVG action icons (black ink in\n#   light mode, gray in dark); Chrome only takes PNGs, which stay gray.\nMANIFEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/manifest.json\"\n/usr/bin/python3 - \"$MANIFEST\" <<'EOF'\nimport json, sys\npath = sys.argv[1]\nm = json.load(open(path))\nm['name'] = 'Intake'\nm['action']['default_icon'] = 'icons/toolbar.svg'\njson.dump(m, open(path, 'w'), indent=2)\nEOF\n";
+			shellScript = "# Safari-only manifest tweak; the shared source manifest stays Chrome-shaped.\n# Safari's Extensions list shows the manifest name -> 'Intake' (the full name\n# is the Chrome Web Store listing name). Icons stay PNG: an SVG action icon\n# rendered as a broken placeholder in Safari's Extensions list (2026-08).\nMANIFEST=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/manifest.json\"\n/usr/bin/python3 - \"$MANIFEST\" <<'EOF'\nimport json, sys\npath = sys.argv[1]\nm = json.load(open(path))\nm['name'] = 'Intake'\njson.dump(m, open(path, 'w'), indent=2)\nEOF\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
