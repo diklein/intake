@@ -220,7 +220,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Safari-only manifest tweak; the shared source manifest stays Chrome-shaped.\n# Safari's Extensions list shows the manifest name -> 'Intake' (the full name\n# is the Chrome Web Store listing name). Icons stay PNG: an SVG action icon\n# rendered as a broken placeholder in Safari's Extensions list (2026-08).\n# Debug builds get a distinct identity -- 'Intake Dev' + the blue-dot icons\n# (extension/icons-dev, from lab/render-marks.mjs) -- so the local build is\n# unmistakable next to the App Store copy in Safari's Extensions list.\nRESOURCES=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nMANIFEST=\"$RESOURCES/manifest.json\"\nNAME='Intake'\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  NAME='Intake Dev'\n  cp \"${SRCROOT}/../../extension/icons-dev/\"icon-*.png \"$RESOURCES/icons/\"\nfi\n/usr/bin/python3 - \"$MANIFEST\" \"$NAME\" <<'EOF'\nimport json, sys\npath, name = sys.argv[1], sys.argv[2]\nm = json.load(open(path))\nm['name'] = name\njson.dump(m, open(path, 'w'), indent=2)\nEOF\n";
+			shellScript = "# Safari-only manifest tweak; the shared source manifest stays Chrome-shaped.\n# Safari's Extensions list shows the manifest name -> 'Intake' (the full name\n# is the Chrome Web Store listing name). Icons stay PNG: an SVG action icon\n# rendered as a broken placeholder in Safari's Extensions list (2026-08).\n# Debug builds get a distinct identity -- 'Intake Dev' + the blue-dot icons\n# (extension/icons-dev, from lab/render-marks.mjs) -- so the local build is\n# unmistakable next to the App Store copy in Safari's Extensions list.\nRESOURCES=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nMANIFEST=\"$RESOURCES/manifest.json\"\n# The manifest's extension/icons are the CHROME (~85%) marks; Safari's containers\n# want the ~60% set, swapped in for every configuration.\ncp \"${SRCROOT}/../../extension/icons-safari/\"icon-*.png \"$RESOURCES/icons/\"\nNAME='Intake'\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  NAME='Intake Dev'\n  cp \"${SRCROOT}/../../extension/icons-dev/\"icon-*.png \"$RESOURCES/icons/\"\nfi\n/usr/bin/python3 - \"$MANIFEST\" \"$NAME\" <<'EOF'\nimport json, sys\npath, name = sys.argv[1], sys.argv[2]\nm = json.load(open(path))\nm['name'] = name\njson.dump(m, open(path, 'w'), indent=2)\nEOF\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -483,7 +483,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.diklein.intake.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.diklein.intake.dev.Extension;
 				PRODUCT_NAME = "Intake Extension";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -563,7 +563,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.diklein.intake;
+				PRODUCT_BUNDLE_IDENTIFIER = com.diklein.intake.dev;
 				PRODUCT_NAME = Intake;
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
