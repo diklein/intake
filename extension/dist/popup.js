@@ -308,7 +308,7 @@
           const filename = sanitizeFilename(expand(settings.filenameTemplate, ctx)) + settings.fileExtension;
           const relPath = [settings.notesFolder, filename].filter(Boolean).join("/");
           const written = await writeFile(vaultHandle, relPath, markdown);
-          status(`Saved ${written}`);
+          status("");
           if (settings.openInObsidian) {
             const file = written.endsWith(".md") ? written.slice(0, -3) : written;
             const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file).replace(/%2F/g, "/")}`;

@@ -172,7 +172,7 @@ async function saveNote({ body }) {
     const relPath = [settings.notesFolder, filename].filter(Boolean).join('/')
     const written = await writeFile(vaultHandle, relPath, markdown)
 
-    status(`Saved ${written}`)
+    status('') // success is silent — the status line is for progress and errors only
 
     if (settings.openInObsidian) {
       // vaultHandle.name is the vault folder's name, which is what Obsidian calls the
