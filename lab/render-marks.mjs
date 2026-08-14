@@ -154,24 +154,14 @@ function renderDevIcon({ size, pattern, first, pitch, d }) {
   return rgba;
 }
 
-// The dev mark gets its own spec: the circle caps the mark at its corner
-// dots (diagonal half-extent + d/2 must fit the radius), so each size pushes
-// pitch and dot diameter to the largest values that still clear the 1px
-// frame — dots at or above the Chrome full-bleed proportions, never the airy
-// Safari ~60% set. `first` centers the mark on the canvas.
-const DEV_SIZES = [
-  { size: 16, pattern: PATTERN_3, first: 4.5, pitch: 3.5, d: 3 },
-  { size: 32, pattern: PATTERN_4, first: 7.75, pitch: 5.5, d: 5 },
-  { size: 48, pattern: PATTERN_4, first: 10.5, pitch: 9, d: 7 },
-  { size: 64, pattern: PATTERN_4, first: 14, pitch: 12, d: 9 },
-  { size: 128, pattern: PATTERN_6, first: 24, pitch: 16, d: 11 },
-];
-
+// The dev mark uses the production SAFARI_SIZES specs verbatim — the dots are
+// pixel-identical to the shipping icon — and the blueprint circle spans the
+// full canvas around them, as large as the icon's box allows.
 mkdirSync(join(ROOT, 'extension/icons-dev'), { recursive: true });
-for (const spec of DEV_SIZES) {
+for (const spec of SAFARI_SIZES) {
   const name = `icon-${spec.size}.png`;
   writeFileSync(join(ROOT, 'extension/icons-dev', name), encodePng(spec.size, renderDevIcon(spec)));
-  console.log(`wrote extension/icons-dev/${name} (dev blueprint, max-fit mark)`);
+  console.log(`wrote extension/icons-dev/${name} (dev blueprint, production mark)`);
 }
 
 // The Chrome Web Store LISTING icon (a dashboard upload, not part of the package)
