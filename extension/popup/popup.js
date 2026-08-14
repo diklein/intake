@@ -159,7 +159,7 @@ async function saveNote({ body }) {
   const settings = await getSettings()
   const ctx = noteContext()
 
-  status('Saving…')
+  status('') // the status line is for errors only; clear any stale one before retrying
   try {
     let markdown = expand(settings.frontmatterTemplate, ctx)
 
@@ -171,8 +171,6 @@ async function saveNote({ body }) {
     const filename = sanitizeFilename(expand(settings.filenameTemplate, ctx)) + settings.fileExtension
     const relPath = [settings.notesFolder, filename].filter(Boolean).join('/')
     const written = await writeFile(vaultHandle, relPath, markdown)
-
-    status('') // success is silent — the status line is for progress and errors only
 
     if (settings.openInObsidian) {
       // vaultHandle.name is the vault folder's name, which is what Obsidian calls the
@@ -205,7 +203,6 @@ $('save-btn').addEventListener('click', () => {
 $('article-btn').addEventListener('click', async () => {
   // Defuddle + Turndown inject on demand — this is the only path that needs them, and
   // keeping them out of init() is what makes the popup open instantly.
-  status('Capturing article…')
   let articleMd = ''
   try {
     const [{ result }] = await chrome.scripting.executeScript({

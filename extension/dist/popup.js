@@ -297,7 +297,7 @@
         if (!await ready()) return;
         const settings = await getSettings();
         const ctx = noteContext();
-        status("Saving\u2026");
+        status("");
         try {
           let markdown = expand(settings.frontmatterTemplate, ctx);
           const imageNames = await saveImageAttachments(settings);
@@ -308,7 +308,6 @@
           const filename = sanitizeFilename(expand(settings.filenameTemplate, ctx)) + settings.fileExtension;
           const relPath = [settings.notesFolder, filename].filter(Boolean).join("/");
           const written = await writeFile(vaultHandle, relPath, markdown);
-          status("");
           if (settings.openInObsidian) {
             const file = written.endsWith(".md") ? written.slice(0, -3) : written;
             const url = `obsidian://open?vault=${encodeURIComponent(vaultHandle.name)}&file=${encodeURIComponent(file).replace(/%2F/g, "/")}`;
@@ -330,7 +329,6 @@
         saveNote({ body });
       });
       $("article-btn").addEventListener("click", async () => {
-        status("Capturing article\u2026");
         let articleMd = "";
         try {
           const [{ result }] = await chrome.scripting.executeScript({
