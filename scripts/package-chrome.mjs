@@ -21,7 +21,12 @@ import { fileURLToPath } from 'node:url'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 
 const stage = mkdtempSync(join(tmpdir(), 'intake-chrome-'))
-cpSync(join(ROOT, 'extension'), stage, { recursive: true, filter: (src) => !/\/\.[^/]*$/.test(src) })
+// icons-safari/icons-dev are Safari-build inputs (the Xcode build phase swaps
+// them in); they never belong in the Chrome package.
+cpSync(join(ROOT, 'extension'), stage, {
+  recursive: true,
+  filter: (src) => !/\/\.[^/]*$/.test(src) && !/\/icons-(safari|dev)(\/|$)/.test(src),
+})
 
 const manifestPath = join(stage, 'manifest.json')
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'))
