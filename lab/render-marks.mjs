@@ -96,11 +96,11 @@ for (const spec of SAFARI_SIZES) {
 
 // Dev icons — the Safari Debug build swaps these in (see the 'Safari manifest
 // name' build phase) so the local extension is unmistakable next to the App
-// Store copy in Safari's Extensions list. The normal mark on a drafting-paper
-// card, after Apple's app-icon grid template: light blue ground, hairline
-// guide lines through every dot center, a circle guide, a framed rounded
-// rect. Reads as "the icon, on the blueprint" — clearly Intake, clearly not
-// the shipping build.
+// Store copy in Safari's Extensions list. The normal mark on drafting paper,
+// after Apple's app-icon grid template: light blue ground filling the whole
+// canvas, hairline guide lines through every dot center, a 1px frame. Reads
+// as "the icon, on the blueprint" — clearly Intake, clearly not the shipping
+// build.
 const BLUEPRINT = {
   bg: [0xea, 0xf2, 0xfb],
   guide: [0x0a, 0x84, 0xff],
@@ -111,22 +111,18 @@ const BLUEPRINT = {
 function renderDevIcon({ size, pattern, first, pitch, d }) {
   const SS = 8;
   const rgba = new Uint8Array(size * size * 4);
-  const half = size / 2;
   const rows = pattern.length;
   const cols = pattern[0].length;
   const mix = (a, b, t) => [0, 1, 2].map((i) => a[i] + (b[i] - a[i]) * t);
 
   function shade(px, py) {
-    // signed distance to the circular card; outside -> transparent. The frame
-    // circle doubles as the template's circle guide.
-    const dist = Math.hypot(px - half, py - half) - half;
-    if (dist > 0) return null;
+    // the drafting paper fills the whole canvas; only a 1px frame marks the edge
     let col = BLUEPRINT.bg;
     let onGuide = false;
     for (let i = 0; i < cols && !onGuide; i++) if (Math.abs(px - (first + pitch * i)) <= 0.5) onGuide = true;
     for (let i = 0; i < rows && !onGuide; i++) if (Math.abs(py - (first + pitch * i)) <= 0.5) onGuide = true;
     if (onGuide) col = mix(col, BLUEPRINT.guide, BLUEPRINT.gridAlpha);
-    if (dist > -1) col = mix(col, BLUEPRINT.guide, BLUEPRINT.frameAlpha); // frame
+    if (px < 1 || py < 1 || px > size - 1 || py > size - 1) col = mix(col, BLUEPRINT.guide, BLUEPRINT.frameAlpha); // frame
     for (let row = 0; row < rows; row++) {
       for (let c = 0; c < cols; c++) {
         const color = pattern[row][c];
@@ -155,8 +151,7 @@ function renderDevIcon({ size, pattern, first, pitch, d }) {
 }
 
 // The dev mark uses the production SAFARI_SIZES specs verbatim — the dots are
-// pixel-identical to the shipping icon — and the blueprint circle spans the
-// full canvas around them, as large as the icon's box allows.
+// pixel-identical to the shipping icon — on a full-canvas blueprint ground.
 mkdirSync(join(ROOT, 'extension/icons-dev'), { recursive: true });
 for (const spec of SAFARI_SIZES) {
   const name = `icon-${spec.size}.png`;
