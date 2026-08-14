@@ -96,17 +96,74 @@ for (const spec of SAFARI_SIZES) {
 
 // Dev icons — the Safari Debug build swaps these in (see the 'Safari manifest
 // name' build phase) so the local extension is unmistakable next to the App
-// Store copy in Safari's Extensions list. Deliberately WILD, nothing like the
-// mark: the full grid (no missing corner dots) in a blue/pink checkerboard —
-// reads as a loud test-pattern swatch at every size, never as Intake.
-const B = [0x0a, 0x84, 0xff]; // dev blue
-const P = [0xff, 0x2d, 0x55]; // dev pink
+// Store copy in Safari's Extensions list. The normal mark on a drafting-paper
+// card, after Apple's app-icon grid template: light blue ground, hairline
+// guide lines through every dot center, a circle guide, a framed rounded
+// rect. Reads as "the icon, on the blueprint" — clearly Intake, clearly not
+// the shipping build.
+const BLUEPRINT = {
+  bg: [0xea, 0xf2, 0xfb],
+  guide: [0x0a, 0x84, 0xff],
+  gridAlpha: 0.28,
+  frameAlpha: 0.5,
+};
+
+function renderDevIcon({ size, pattern, first, pitch, d }) {
+  const SS = 8;
+  const rgba = new Uint8Array(size * size * 4);
+  const half = size / 2;
+  const corner = size * 0.22; // macOS icon-ish corner radius
+  const circleR = first + (pitch * (pattern.length - 1)) / 2 - first + d / 2 + Math.max(1, size / 16);
+  const rows = pattern.length;
+  const cols = pattern[0].length;
+  const mix = (a, b, t) => [0, 1, 2].map((i) => a[i] + (b[i] - a[i]) * t);
+
+  function shade(px, py) {
+    // signed distance to the rounded rect; outside -> transparent
+    const qx = Math.abs(px - half) - (half - corner);
+    const qy = Math.abs(py - half) - (half - corner);
+    const dist = Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - corner;
+    if (dist > 0) return null;
+    let col = BLUEPRINT.bg;
+    let onGuide = false;
+    for (let i = 0; i < cols && !onGuide; i++) if (Math.abs(px - (first + pitch * i)) <= 0.5) onGuide = true;
+    for (let i = 0; i < rows && !onGuide; i++) if (Math.abs(py - (first + pitch * i)) <= 0.5) onGuide = true;
+    const mid = first + (pitch * (rows - 1)) / 2;
+    if (!onGuide && size >= 32 && Math.abs(Math.hypot(px - mid, py - mid) - circleR) <= 0.5) onGuide = true;
+    if (onGuide) col = mix(col, BLUEPRINT.guide, BLUEPRINT.gridAlpha);
+    if (dist > -1) col = mix(col, BLUEPRINT.guide, BLUEPRINT.frameAlpha); // frame
+    for (let row = 0; row < rows; row++) {
+      for (let c = 0; c < cols; c++) {
+        const color = pattern[row][c];
+        if (!color) continue;
+        if (Math.hypot(px - (first + pitch * c), py - (first + pitch * row)) <= d / 2) col = color;
+      }
+    }
+    return col;
+  }
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      let r = 0, g = 0, b = 0, a = 0;
+      for (let sy = 0; sy < SS; sy++) {
+        for (let sx = 0; sx < SS; sx++) {
+          const col = shade(x + (sx + 0.5) / SS, y + (sy + 0.5) / SS);
+          if (!col) continue;
+          r += col[0]; g += col[1]; b += col[2]; a++;
+        }
+      }
+      if (!a) continue;
+      rgba.set([Math.round(r / a), Math.round(g / a), Math.round(b / a), Math.round((a / (SS * SS)) * 255)], (y * size + x) * 4);
+    }
+  }
+  return rgba;
+}
+
 mkdirSync(join(ROOT, 'extension/icons-dev'), { recursive: true });
 for (const spec of SAFARI_SIZES) {
-  const devPattern = spec.pattern.map((row, y) => row.map((_, x) => ((x + y) % 2 ? P : B)));
   const name = `icon-${spec.size}.png`;
-  writeFileSync(join(ROOT, 'extension/icons-dev', name), encodePng(spec.size, renderDots({ ...spec, pattern: devPattern })));
-  console.log(`wrote extension/icons-dev/${name} (dev checkerboard)`);
+  writeFileSync(join(ROOT, 'extension/icons-dev', name), encodePng(spec.size, renderDevIcon(spec)));
+  console.log(`wrote extension/icons-dev/${name} (dev blueprint)`);
 }
 
 // The Chrome Web Store LISTING icon (a dashboard upload, not part of the package)
