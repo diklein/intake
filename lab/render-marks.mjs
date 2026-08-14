@@ -112,24 +112,19 @@ function renderDevIcon({ size, pattern, first, pitch, d }) {
   const SS = 8;
   const rgba = new Uint8Array(size * size * 4);
   const half = size / 2;
-  const corner = size * 0.22; // macOS icon-ish corner radius
-  const circleR = first + (pitch * (pattern.length - 1)) / 2 - first + d / 2 + Math.max(1, size / 16);
   const rows = pattern.length;
   const cols = pattern[0].length;
   const mix = (a, b, t) => [0, 1, 2].map((i) => a[i] + (b[i] - a[i]) * t);
 
   function shade(px, py) {
-    // signed distance to the rounded rect; outside -> transparent
-    const qx = Math.abs(px - half) - (half - corner);
-    const qy = Math.abs(py - half) - (half - corner);
-    const dist = Math.min(Math.max(qx, qy), 0) + Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) - corner;
+    // signed distance to the circular card; outside -> transparent. The frame
+    // circle doubles as the template's circle guide.
+    const dist = Math.hypot(px - half, py - half) - half;
     if (dist > 0) return null;
     let col = BLUEPRINT.bg;
     let onGuide = false;
     for (let i = 0; i < cols && !onGuide; i++) if (Math.abs(px - (first + pitch * i)) <= 0.5) onGuide = true;
     for (let i = 0; i < rows && !onGuide; i++) if (Math.abs(py - (first + pitch * i)) <= 0.5) onGuide = true;
-    const mid = first + (pitch * (rows - 1)) / 2;
-    if (!onGuide && size >= 32 && Math.abs(Math.hypot(px - mid, py - mid) - circleR) <= 0.5) onGuide = true;
     if (onGuide) col = mix(col, BLUEPRINT.guide, BLUEPRINT.gridAlpha);
     if (dist > -1) col = mix(col, BLUEPRINT.guide, BLUEPRINT.frameAlpha); // frame
     for (let row = 0; row < rows; row++) {
